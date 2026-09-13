@@ -41,6 +41,15 @@ function iniciarJuego() {
     carta.className = 'carta';
     carta.dataset.emoji = emoji;
     carta.dataset.index = index;
+    carta.setAttribute('role', 'button');
+    carta.setAttribute('tabindex', '0');
+    carta.setAttribute('aria-label', `Carta ${index + 1}, sin voltear`);
+    carta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        voltearCarta(carta);
+      }
+    });
     carta.innerHTML = `
       <span class="contenido">${emoji}</span>
       <span class="reverso">❓</span>
@@ -56,6 +65,7 @@ function voltearCarta(carta) {
   if (carta.classList.contains('encontrada')) return;
 
   carta.classList.add('volteada');
+  carta.setAttribute('aria-label', `Carta ${Number(carta.dataset.index) + 1}: ${carta.dataset.emoji}`);
 
   if (!primeraCarta) {
     primeraCarta = carta;
@@ -81,6 +91,9 @@ function voltearCarta(carta) {
     setTimeout(() => {
       primeraCarta.classList.remove('volteada');
       segundaCarta.classList.remove('volteada');
+      [primeraCarta, segundaCarta].forEach((c) => {
+        c.setAttribute('aria-label', `Carta ${Number(c.dataset.index) + 1}, sin voltear`);
+      });
       resetearSeleccion();
     }, 800);
   }
