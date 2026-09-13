@@ -13,6 +13,34 @@ const parejasEl = document.getElementById('parejas');
 const totalParejasEl = document.getElementById('total-parejas');
 const mensajeVictoriaEl = document.getElementById('mensaje-victoria');
 const intentosFinalEl = document.getElementById('intentos-final');
+const mejorPuntajeEl = document.getElementById('mejor-puntaje');
+
+const CLAVE_MEJOR_PUNTAJE = 'memorama:mejor-puntaje';
+
+function obtenerMejorPuntaje() {
+  try {
+    const guardado = localStorage.getItem(CLAVE_MEJOR_PUNTAJE);
+    return guardado ? Number(guardado) : null;
+  } catch {
+    return null;
+  }
+}
+
+function actualizarMejorPuntajeUI() {
+  const mejor = obtenerMejorPuntaje();
+  mejorPuntajeEl.textContent = mejor === null ? '--' : mejor;
+}
+
+function guardarMejorPuntajeSiCorresponde(intentosDeEstaPartida) {
+  const mejorActual = obtenerMejorPuntaje();
+  if (mejorActual === null || intentosDeEstaPartida < mejorActual) {
+    try {
+      localStorage.setItem(CLAVE_MEJOR_PUNTAJE, String(intentosDeEstaPartida));
+    } catch {
+      // sin acceso a localStorage: no persiste, pero el resto del juego sigue funcionando
+    }
+  }
+}
 
 function barajar(array) {
   const copia = [...array];
@@ -112,10 +140,13 @@ function actualizarMarcador() {
 
 function mostrarVictoria() {
   intentosFinalEl.textContent = intentos;
+  guardarMejorPuntajeSiCorresponde(intentos);
+  actualizarMejorPuntajeUI();
   mensajeVictoriaEl.hidden = false;
 }
 
 document.getElementById('btn-reiniciar').addEventListener('click', iniciarJuego);
 document.getElementById('btn-jugar-de-nuevo').addEventListener('click', iniciarJuego);
 
+actualizarMejorPuntajeUI();
 iniciarJuego();
