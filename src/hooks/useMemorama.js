@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import confetti from 'canvas-confetti';
 
 const DECKS = {
   emojis: ['🍎', '🍌', '🍇', '🍉', '🍓', '🍒', '🍍', '🥝', '🥑', '🥥', '🍔', '🍟', '🍕', '🌭', '🍩', '🍪', '🍫', '🍬'],
@@ -100,6 +101,15 @@ export function useMemorama() {
     if (cards.length > 0 && matchedIndices.length === cards.length) {
       setIsWon(true);
       setIsActive(false);
+      
+      // Lanzar confetti
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#8b5cf6', '#34d399', '#fbbf24', '#ec4899']
+      });
+
       const currentScore = score + Math.max(0, 1000 - time * 10);
       setScore(currentScore);
       if (!bestScore || currentScore > bestScore) {
@@ -108,6 +118,11 @@ export function useMemorama() {
       }
     }
   }, [matchedIndices, cards.length, score, time, bestScore]);
+
+  const resetBestScore = useCallback(() => {
+    setBestScore(null);
+    localStorage.removeItem('memorama-best');
+  }, []);
 
   return {
     cards,
@@ -121,6 +136,7 @@ export function useMemorama() {
     level,
     theme,
     flipCard,
-    startGame
+    startGame,
+    resetBestScore
   };
 }
