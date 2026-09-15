@@ -3,6 +3,7 @@ import { Board } from './components/Board';
 import { ScoreBoard } from './components/ScoreBoard';
 import { Layout } from './components/Layout';
 import { RotateCcw, Eye } from 'lucide-react';
+import { getDict } from './utils/i18n';
 import './index.css';
 
 function App() {
@@ -10,8 +11,11 @@ function App() {
     cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, isGameOver, bestScore,
     level, theme, isMultiplayer, isTimeAttack, activePlayer, player1Score, player2Score,
     globalStats, profile, setProfile, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled,
+    lang, setLang, themeMode, setThemeMode,
     flipCard, useHint, startGame, resetBestScore
   } = useMemorama();
+
+  const t = getDict(lang);
 
   return (
     <Layout 
@@ -23,6 +27,10 @@ function App() {
       globalStats={globalStats}
       profile={profile}
       setProfile={setProfile}
+      lang={lang}
+      setLang={setLang}
+      themeMode={themeMode}
+      setThemeMode={setThemeMode}
     >
       <div className="app-container">
         <header className="header">
@@ -44,15 +52,15 @@ function App() {
               else if (val === 'multi') startGame(level, theme, true, false);
               else startGame(level, theme, false, false);
             }} className="styled-select">
-              <option value="single">1 Jugador</option>
-              <option value="multi">2 Jugadores</option>
-              <option value="timeattack">Contrarreloj</option>
+              <option value="single">{t.single}</option>
+              <option value="multi">{t.multi}</option>
+              <option value="timeattack">{t.timeattack}</option>
             </select>
             <button className="btn-primary flex-center" onClick={() => startGame()}>
-              <RotateCcw size={18} /> Reiniciar
+              <RotateCcw size={18} /> {t.restart}
             </button>
-            <button className="btn-secondary flex-center" onClick={useHint} disabled={score < 200 || isWon}>
-              <Eye size={18} /> Pista (-200)
+            <button className="btn-secondary flex-center" onClick={useHint} disabled={score < 200 || isWon || isGameOver}>
+              <Eye size={18} /> {t.hint}
             </button>
           </div>
         </header>
@@ -67,20 +75,21 @@ function App() {
           activePlayer={activePlayer}
           player1Score={player1Score}
           player2Score={player2Score}
+          lang={lang}
         />
         
         <div className="board-container">
           {isWon && (
             <div className="victory-overlay">
               <div className="victory-card">
-                <h2>🎉 ¡Juego Terminado! 🎉</h2>
-                <p>Has completado el tablero en <strong>{time}</strong> segundos.</p>
+                <h2>{t.win}</h2>
+                <p>Completado en <strong>{time}</strong>s.</p>
                 {isMultiplayer ? (
-                  <p className="final-score">Ganador: <span>{player1Score > player2Score ? 'P1' : player1Score < player2Score ? 'P2' : 'Empate'}</span></p>
+                  <p className="final-score">{t.winner}: <span>{player1Score > player2Score ? 'P1' : player1Score < player2Score ? 'P2' : t.tie}</span></p>
                 ) : (
-                  <p className="final-score">Puntuación Total: <span>{score}</span></p>
+                  <p className="final-score">{t.total_score}: <span>{score}</span></p>
                 )}
-                <button className="btn-primary large" onClick={() => startGame()}>Jugar de Nuevo</button>
+                <button className="btn-primary large" onClick={() => startGame()}>{t.restart}</button>
               </div>
             </div>
           )}
@@ -95,9 +104,9 @@ function App() {
           {isGameOver && (
             <div className="victory-overlay">
               <div className="victory-card">
-                <h2>⏰ ¡Tiempo Agotado! ⏰</h2>
-                <p>Lograste <strong>{score}</strong> puntos en modo Contrarreloj.</p>
-                <button className="btn-primary large" onClick={() => startGame()}>Reintentar</button>
+                <h2>{t.timeout}</h2>
+                <p>{t.total_score}: <strong>{score}</strong>.</p>
+                <button className="btn-primary large" onClick={() => startGame()}>{t.retry}</button>
               </div>
             </div>
           )}

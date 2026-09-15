@@ -15,6 +15,19 @@
   --card-matched: #10b981;
 }
 
+[data-theme='light'] {
+  --bg-color-1: #f1f5f9;
+  --bg-color-2: #e2e8f0;
+  --bg-color-3: #cbd5e1;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --card-bg: #f8fafc;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -44,6 +57,41 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.app-cont.layout {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 80px; 
+}
+
+.floating-dock {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 1.5rem;
+  border-radius: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+@media (min-width: 768px) {
+  .floating-dock {
+    bottom: 30px;
+  }
+}
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .app-container {
