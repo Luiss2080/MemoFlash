@@ -1,33 +1,36 @@
 import { useMemorama, LEVELS } from './hooks/useMemorama';
 import { Board } from './components/Board';
 import { ScoreBoard } from './components/ScoreBoard';
+import { Layout } from './components/Layout';
+import { RotateCcw } from 'lucide-react';
 import './index.css';
 
 function App() {
   const {
     cards, flippedIndices, matchedIndices, attempts, score, time, isWon, bestScore,
-    level, theme, flipCard, startGame
+    level, theme, flipCard, startGame, resetBestScore
   } = useMemorama();
 
   return (
-    <div className="app-container">
-      <header className="header">
-        <h1>🧠 Memorama Premium</h1>
-        <div className="controls">
-          <select value={level} onChange={(e) => startGame(e.target.value, theme)}>
-            {Object.entries(LEVELS).map(([key, lvl]) => (
-              <option key={key} value={key}>{lvl.name}</option>
-            ))}
-          </select>
-          <select value={theme} onChange={(e) => startGame(level, e.target.value)}>
-            <option value="emojis">Emojis 🍎</option>
-            <option value="animales">Animales 🐶</option>
-          </select>
-          <button className="btn-primary" onClick={() => startGame()}>🔄 Reiniciar</button>
-        </div>
-      </header>
+    <Layout resetBestScore={resetBestScore}>
+      <div className="app-container">
+        <header className="header">
+          <div className="controls">
+            <select value={level} onChange={(e) => startGame(e.target.value, theme)} className="styled-select">
+              {Object.entries(LEVELS).map(([key, lvl]) => (
+                <option key={key} value={key}>{lvl.name}</option>
+              ))}
+            </select>
+            <select value={theme} onChange={(e) => startGame(level, e.target.value)} className="styled-select">
+              <option value="emojis">Emojis 🍎</option>
+              <option value="animales">Animales 🐶</option>
+            </select>
+            <button className="btn-primary flex-center" onClick={() => startGame()}>
+              <RotateCcw size={18} /> Reiniciar
+            </button>
+          </div>
+        </header>
 
-      <main className="main-content">
         <ScoreBoard attempts={attempts} score={score} time={time} bestScore={bestScore} />
         
         <div className="board-container">
@@ -50,8 +53,8 @@ function App() {
             level={level}
           />
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 }
 
