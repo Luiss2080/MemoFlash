@@ -1,25 +1,28 @@
 import { Timer, RotateCcw, Star, Trophy, Flame } from 'lucide-react';
+import { getDict } from '../utils/i18n';
 
-export function ScoreBoard({ attempts, score, time, bestScore, combo, isMultiplayer, activePlayer, player1Score, player2Score }) {
+export function ScoreBoard({ attempts, score, time, bestScore, combo, isMultiplayer, activePlayer, player1Score, player2Score, lang }) {
   const formatTime = (s) => {
     const mins = Math.floor(s / 60);
     const secs = s % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const t = getDict(lang);
+
   if (isMultiplayer) {
     return (
       <div className="scoreboard">
         <div className={`score-item ${activePlayer === 1 ? 'active-player' : ''}`}>
-          <span className="label">Jugador 1 🎮</span>
+          <span className="label">{t.p1}</span>
           <span className="value score-highlight">{player1Score}</span>
         </div>
         <div className="score-item">
-          <span className="label"><Timer size={16}/> Tiempo</span>
+          <span className="label"><Timer size={16}/> {t.time}</span>
           <span className="value">{formatTime(time)}</span>
         </div>
         <div className={`score-item ${activePlayer === 2 ? 'active-player' : ''}`}>
-          <span className="label">Jugador 2 🎮</span>
+          <span className="label">{t.p2}</span>
           <span className="value score-highlight">{player2Score}</span>
         </div>
       </div>
@@ -29,16 +32,8 @@ export function ScoreBoard({ attempts, score, time, bestScore, combo, isMultipla
   return (
     <div className="scoreboard">
       <div className="score-item">
-        <span className="label"><Timer size={16}/> Tiempo</span>
-        <span className="value">{formatTime(time)}</span>
-      </div>
-      <div className="score-item">
-        <span className="label"><RotateCcw size={16}/> Intentos</span>
-        <span className="value">{attempts}</span>
-      </div>
-      <div className="score-item">
         <span className="label">
-          <Star size={16} fill="currentColor" className="text-yellow-400"/> Puntos 
+          <Star size={16} fill="currentColor" className="text-yellow-400"/> {t.points} 
         </span>
         <span className="value score-highlight">
           {score}
@@ -46,8 +41,12 @@ export function ScoreBoard({ attempts, score, time, bestScore, combo, isMultipla
         </span>
       </div>
       <div className="score-item">
-        <span className="label"><Trophy size={16} fill="currentColor" className="text-yellow-600"/> Mejor</span>
-        <span className="value">{bestScore || '--'}</span>
+        <span className="label"><Trophy size={16} fill="currentColor" className="text-yellow-600"/> {t.best}</span>
+        <span className="value">{bestScore || 0}</span>
+      </div>
+      <div className="score-item">
+        <span className="label"><Timer size={16}/> {t.time}</span>
+        <span className="value">{formatTime(time)}</span>
       </div>
     </div>
   );
