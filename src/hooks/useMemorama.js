@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
+import { sound } from '../utils/audio';
 
 const DECKS = {
   emojis: ['🍎', '🍌', '🍇', '🍉', '🍓', '🍒', '🍍', '🥝', '🥑', '🥥', '🍔', '🍟', '🍕', '🌭', '🍩', '🍪', '🍫', '🍬'],
@@ -25,6 +26,9 @@ export function useMemorama() {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isWon, setIsWon] = useState(false);
+  
+  const [combo, setCombo] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const [bestScore, setBestScore] = useState(
     () => Number(localStorage.getItem('memorama-best')) || null
@@ -46,6 +50,7 @@ export function useMemorama() {
     setAttempts(0);
     setScore(0);
     setTime(0);
+    setCombo(0);
     setIsActive(false);
     setIsWon(false);
   }, [level, theme]);
@@ -72,6 +77,9 @@ export function useMemorama() {
 
     if (!isActive) setIsActive(true); // Start timer on first click
 
+    sound.init();
+    sound.flip(soundEnabled);
+
     const newFlipped = [...flippedIndices, index];
     setFlippedIndices(newFlipped);
 
@@ -82,12 +90,21 @@ export function useMemorama() {
       const [first, second] = newFlipped;
       if (cards[first].content === cards[second].content) {
         // Match!
+        sound.match(soundEnabled);
         setMatchedIndices(prev => [...prev, first, second]);
-        setScore(s => s + 100 + Math.max(0, 50 - time)); // Time bonus
+        const currentCombo = combo + 1;
+        setCombo(currentCombo);
+        
+        // Multiplier based on combo
+        const comboMultiplier = currentCombo > 1 ? currentCombo : 1;
+        setScore(s => s + (100 + Math.max(0, 50 - time)) * comboMultiplier); 
+        
         setFlippedIndices([]);
         setIsLocked(false);
       } else {
         // No match
+        sound.error(soundEnabled);
+        setCombo(0); // Reset combo
         setTimeout(() => {
           setFlippedIndices([]);
           setIsLocked(false);
@@ -96,11 +113,25 @@ export function useMemorama() {
     }
   };
 
+  const useHint = () => {
+    if (isLocked || isWon || score < 200) return;
+    setScore(s => s - 200);
+    const hidden = cards.map((_, i) => i).filter(i => !matchedIndices.includes(i));
+    setFlippedIndices(hidden);
+    setIsLocked(true);
+    setTimeout(() => {
+      setFlippedIndices([]);
+      setIsLocked(false);
+    }, 1000);
+  };
+
+
   // Check win condition
   useEffect(() => {
     if (cards.length > 0 && matchedIndices.length === cards.length) {
       setIsWon(true);
       setIsActive(false);
+      sound.win(soundEnabled);
       
       // Lanzar confetti
       confetti({
@@ -131,11 +162,15 @@ export function useMemorama() {
     attempts,
     score,
     time,
+    combo,
     isWon,
     bestScore,
     level,
     theme,
+    soundEnabled,
+    setSoundEnabled,
     flipCard,
+    useHint,
     startGame,
     resetBestScore
   };
