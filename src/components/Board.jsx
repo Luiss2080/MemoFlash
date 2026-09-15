@@ -9,13 +9,14 @@ export function Board({ cards, flippedIndices, matchedIndices, onFlip, level }) 
       style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
     >
       {cards.map((card, index) => (
-        <Card 
-          key={card.id}
-          content={card.content}
-          isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
-          isMatched={matchedIndices.includes(index)}
-          onClick={() => onFlip(index)}
-        />
+        <div key={card.id} className="card-wrapper" style={{ animationDelay: `${index * 0.05}s` }}>
+          <Card 
+            content={card.content}
+            isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
+            isMatched={matchedIndices.includes(index)}
+            onClick={() => onFlip(index)}
+          />
+        </div>
       ))}
     </div>
   );

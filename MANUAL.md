@@ -7,8 +7,14 @@ La puntuación no se basa solo en el número de aciertos, sino en la rapidez y l
 1. **Puntos por Acierto:** 
    - Cada pareja encontrada otorga un puntaje base de **+100 puntos**.
    - Se le suma un bono de tiempo por rapidez: `Math.max(0, 50 - time)` al momento de encontrarla. Es decir, mientras menos segundos hayan pasado desde el inicio de la partida, mayor será el bono (hasta +50).
-2. **Puntos de Victoria:**
+   - **Multiplicador de Combo:** Si el jugador acierta de manera consecutiva (sin fallar entre turnos), el puntaje total del turno se multiplica por el número de aciertos consecutivos (ej. x2, x3). Si falla, el combo vuelve a cero.
+2. **Sistema de Pistas (Hints):**
+   - El jugador puede revelar las cartas por 1 segundo sacrificando **200 puntos**. No puede usarse si no se tienen puntos suficientes.
+3. **Puntos de Victoria:**
    - Al ganar la partida (completar todas las parejas), se otorga un bono masivo por el tiempo total empleado: `Math.max(0, 1000 - time * 10)`.
+
+### Efectos de Sonido
+Se utiliza la **Web Audio API** nativa (`src/utils/audio.js`) para sintetizar osciladores dinámicos. Esto evita la carga de archivos de audio externos, mejorando el rendimiento y peso de la app. Los efectos incluyen flip, match, error y victoria.
 
 ### Dependencias y Librerías Añadidas
 - `react`, `react-dom`

@@ -27,8 +27,12 @@ Memorama es un juego clásico de memoria. Queremos modernizarlo con una interfaz
 
 ### Configuraciones y Documentación
 - **RF-11:** *When* el jugador hace clic en el botón de Manual, el sistema *shall* abrir un modal con las instrucciones del juego y la tabla de puntuaciones.
-- **RF-12:** *When* el jugador hace clic en Ajustes, el sistema *shall* abrir un modal donde puede reiniciar su Mejor Puntaje (`resetBestScore`).
-- **RF-13:** *When* el jugador completa exitosamente el tablero, el sistema *shall* disparar una animación visual (confeti) además de la pantalla de victoria.
+- **RF-12:** *When* el jugador hace clic en Ajustes, el sistema *shall* abrir un modal donde puede reiniciar su Mejor Puntaje (`resetBestScore`) y activar/desactivar efectos de sonido.
+- **RF-13:** *When* el jugador completa exitosamente el tablero, el sistema *shall* disparar una animación visual (confeti) y efectos de sonido de victoria.
+
+### Mecánicas Avanzadas
+- **RF-14:** *If* el jugador encuentra parejas de forma consecutiva (sin errores), el sistema *shall* activar un multiplicador de "Combo" para los puntos obtenidos.
+- **RF-15:** *When* el jugador usa el botón de "Pista", el sistema *shall* restar 200 puntos y mostrar temporalmente las cartas ocultas por 1 segundo.
 
 ## Fuera de Alcance (MVP Actual)
 - Multijugador en tiempo real.

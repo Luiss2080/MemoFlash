@@ -1,6 +1,6 @@
-import { Timer, RotateCcw, Star, Trophy } from 'lucide-react';
+import { Timer, RotateCcw, Star, Trophy, Flame } from 'lucide-react';
 
-export function ScoreBoard({ attempts, score, time, bestScore }) {
+export function ScoreBoard({ attempts, score, time, bestScore, combo }) {
   const formatTime = (s) => {
     const mins = Math.floor(s / 60);
     const secs = s % 60;
@@ -18,8 +18,13 @@ export function ScoreBoard({ attempts, score, time, bestScore }) {
         <span className="value">{attempts}</span>
       </div>
       <div className="score-item">
-        <span className="label"><Star size={16} fill="currentColor" className="text-yellow-400"/> Puntos</span>
-        <span className="value score-highlight">{score}</span>
+        <span className="label">
+          <Star size={16} fill="currentColor" className="text-yellow-400"/> Puntos 
+        </span>
+        <span className="value score-highlight">
+          {score}
+          {combo > 1 && <span className="combo-badge"><Flame size={14}/> x{combo}</span>}
+        </span>
       </div>
       <div className="score-item">
         <span className="label"><Trophy size={16} fill="currentColor" className="text-yellow-600"/> Mejor</span>

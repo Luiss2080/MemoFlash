@@ -1,9 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
 
 :root {
-  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --bg-color-1: #0f172a;
+  --bg-color-2: #1e1b4b;
+  --bg-color-3: #312e81;
   --primary: #8b5cf6;
   --primary-hover: #7c3aed;
+  --secondary: #fb923c;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
   --text: #f8fafc;
@@ -20,12 +23,21 @@
 }
 
 body {
-  background: var(--bg-gradient);
+  background: var(--bg-color-1);
+  background: linear-gradient(135deg, var(--bg-color-1) 0%, var(--bg-color-2) 50%, var(--bg-color-3) 100%);
+  background-size: 400% 400%;
+  animation: meshGradient 15s ease infinite;
   color: var(--text);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@keyframes meshGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 #root {
@@ -142,6 +154,16 @@ select option {
   perspective: 1000px;
 }
 
+.card-wrapper {
+  opacity: 0;
+  animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-50px) rotateX(-20deg) scale(0.8); }
+  to { opacity: 1; transform: translateY(0) rotateX(0) scale(1); }
+}
+
 /* Card */
 .card {
   width: 100%;
@@ -149,6 +171,11 @@ select option {
   max-height: 120px;
   cursor: pointer;
   perspective: 1000px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover:not(.flipped):not(.matched) {
+  transform: translateY(-5px) scale(1.05);
 }
 
 .card-inner {
@@ -181,6 +208,11 @@ select option {
 .card-front {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: box-shadow 0.3s;
+}
+
+.card:hover:not(.flipped):not(.matched) .card-front {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
 }
 
 .card-back {
@@ -240,6 +272,47 @@ select option {
   font-size: 2.5rem;
   font-weight: 800;
   color: #34d399;
+}
+
+.combo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeIn {

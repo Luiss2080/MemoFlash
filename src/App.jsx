@@ -2,17 +2,17 @@ import { useMemorama, LEVELS } from './hooks/useMemorama';
 import { Board } from './components/Board';
 import { ScoreBoard } from './components/ScoreBoard';
 import { Layout } from './components/Layout';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Eye } from 'lucide-react';
 import './index.css';
 
 function App() {
   const {
-    cards, flippedIndices, matchedIndices, attempts, score, time, isWon, bestScore,
-    level, theme, flipCard, startGame, resetBestScore
+    cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, bestScore,
+    level, theme, soundEnabled, setSoundEnabled, flipCard, useHint, startGame, resetBestScore
   } = useMemorama();
 
   return (
-    <Layout resetBestScore={resetBestScore}>
+    <Layout resetBestScore={resetBestScore} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}>
       <div className="app-container">
         <header className="header">
           <div className="controls">
@@ -28,10 +28,13 @@ function App() {
             <button className="btn-primary flex-center" onClick={() => startGame()}>
               <RotateCcw size={18} /> Reiniciar
             </button>
+            <button className="btn-secondary flex-center" onClick={useHint} disabled={score < 200 || isWon}>
+              <Eye size={18} /> Pista (-200)
+            </button>
           </div>
         </header>
 
-        <ScoreBoard attempts={attempts} score={score} time={time} bestScore={bestScore} />
+        <ScoreBoard attempts={attempts} score={score} time={time} bestScore={bestScore} combo={combo} />
         
         <div className="board-container">
           {isWon && (
