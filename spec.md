@@ -25,6 +25,11 @@ Memorama es un juego clásico de memoria. Queremos modernizarlo con una interfaz
 - **RF-9:** *While* la partida está activa, el sistema *shall* mostrar el número de intentos realizados.
 - **RF-10:** *While* la partida está activa, el sistema *shall* mostrar un temporizador que cuenta el tiempo transcurrido desde el primer clic.
 
+### Configuraciones y Documentación
+- **RF-11:** *When* el jugador hace clic en el botón de Manual, el sistema *shall* abrir un modal con las instrucciones del juego y la tabla de puntuaciones.
+- **RF-12:** *When* el jugador hace clic en Ajustes, el sistema *shall* abrir un modal donde puede reiniciar su Mejor Puntaje (`resetBestScore`).
+- **RF-13:** *When* el jugador completa exitosamente el tablero, el sistema *shall* disparar una animación visual (confeti) además de la pantalla de victoria.
+
 ## Fuera de Alcance (MVP Actual)
 - Multijugador en tiempo real.
 - Leaderboard global con backend.
