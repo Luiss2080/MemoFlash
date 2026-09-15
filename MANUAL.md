@@ -14,9 +14,16 @@ La puntuación no se basa solo en el número de aciertos, sino en la rapidez y l
    - Al ganar la partida (completar todas las parejas), se otorga un bono masivo por el tiempo total empleado: `Math.max(0, 1000 - time * 10)`.
 4. **Multijugador (Turnos):**
    - En el modo de 2 Jugadores, los jugadores acumulan puntos por separado. El bono de tiempo por acertar se sigue calculando en base al tiempo global de la partida. El bono final de victoria se suma al jugador que encuentra la última pareja.
+5. **Contrarreloj (Time Attack):**
+   - El jugador tiene **60 segundos** iniciales para ganar.
+   - Cada pareja acertada añade **+5 segundos** al reloj.
+   - Si el tiempo llega a 0, el juego termina inmediatamente (Game Over).
 
-### Efectos de Sonido
-Se utiliza la **Web Audio API** nativa (`src/utils/audio.js`) para sintetizar osciladores dinámicos. Esto evita la carga de archivos de audio externos, mejorando el rendimiento y peso de la app. Los efectos incluyen flip, match, error y victoria.
+### Perfiles de Usuario
+Los jugadores pueden crear un **Perfil (Avatar y Nombre)** que persiste en su navegador (`localStorage: memorama-profile`) y se integra con su panel de Estadísticas Globales.
+
+### Efectos de Sonido y Música (BGM)
+Se utiliza la **Web Audio API** nativa (`src/utils/audio.js`) para sintetizar osciladores dinámicos. Esto evita la carga de archivos de audio externos. Los efectos incluyen flip, match, error y victoria. También incluye un generador de arpegios en bucle que actúa como Música de Fondo (BGM) en estilo retro.
 
 ### Dependencias y Librerías Añadidas
 - `react`, `react-dom`
