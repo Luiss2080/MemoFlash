@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ManualModal } from './ManualModal';
 import { SettingsModal } from './SettingsModal';
 
-export function Layout({ children, resetBestScore }) {
+export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled }) {
   const [isManualOpen, setIsManualOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -36,6 +36,8 @@ export function Layout({ children, resetBestScore }) {
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
         resetBestScore={resetBestScore}
+        soundEnabled={soundEnabled}
+        setSoundEnabled={setSoundEnabled}
       />
     </div>
   );

@@ -1,10 +1,7 @@
 import { Modal } from './Modal';
-import { Settings, Volume2, VolumeX, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Volume2, VolumeX, Trash2 } from 'lucide-react';
 
-export function SettingsModal({ isOpen, onClose, resetBestScore }) {
-  const [soundEnabled, setSoundEnabled] = useState(true);
-
+export function SettingsModal({ isOpen, onClose, resetBestScore, soundEnabled, setSoundEnabled }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Configuración">
       <div className="settings-list">
