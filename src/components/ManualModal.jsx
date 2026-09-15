@@ -1,9 +1,12 @@
 import { Modal } from './Modal';
 import { BookOpen, Trophy, Clock, CheckCircle } from 'lucide-react';
+import { getDict } from '../utils/i18n';
 
-export function ManualModal({ isOpen, onClose }) {
+export function ManualModal({ isOpen, onClose, lang }) {
+  const t = getDict(lang);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Manual de Juego">
+    <Modal isOpen={isOpen} onClose={onClose} title={t.manual}>
       <div className="manual-section">
         <h3><BookOpen size={20} /> Reglas Básicas</h3>
         <p>El objetivo del Memorama es encontrar todos los pares de cartas idénticas en el menor tiempo y con la menor cantidad de intentos posibles.</p>

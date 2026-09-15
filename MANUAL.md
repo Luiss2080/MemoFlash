@@ -22,6 +22,11 @@ La puntuación no se basa solo en el número de aciertos, sino en la rapidez y l
 ### Perfiles de Usuario
 Los jugadores pueden crear un **Perfil (Avatar y Nombre)** que persiste en su navegador (`localStorage: memorama-profile`) y se integra con su panel de Estadísticas Globales.
 
+### Funcionalidades de Vanguardia (Fase 6)
+- **Instalación Nativa (PWA):** El juego incluye *Service Workers* y un manifiesto para instalarse de forma offline en cualquier dispositivo.
+- **Modo Claro / Oscuro:** Toda la interfaz reacciona a variables CSS para cambiar el tema al gusto del jugador.
+- **Multi-Idioma:** Soporte nativo y rápido para Inglés (`en`) y Español (`es`) manejado en `src/utils/i18n.js`.
+
 ### Efectos de Sonido y Música (BGM)
 Se utiliza la **Web Audio API** nativa (`src/utils/audio.js`) para sintetizar osciladores dinámicos. Esto evita la carga de archivos de audio externos. Los efectos incluyen flip, match, error y victoria. También incluye un generador de arpegios en bucle que actúa como Música de Fondo (BGM) en estilo retro.
 

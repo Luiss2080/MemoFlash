@@ -43,6 +43,11 @@ Memorama es un juego clásico de memoria. Queremos modernizarlo con una interfaz
 - **RF-19:** *While* en la barra superior, el usuario *shall* poder abrir el `ProfileModal` para cambiar su Nombre y Avatar, los cuales se guardarán en localStorage.
 - **RF-20:** *If* el jugador selecciona el modo "Contrarreloj", el temporizador *shall* contar en reversa desde 60 segundos, sumando 5 segundos por cada acierto, y terminando el juego si llega a cero.
 
+### Masterpiece: PWA y UI (Phase 6)
+- **RF-21:** *While* en un dispositivo móvil o escritorio, el usuario *shall* ser capaz de instalar el juego de manera nativa (Progressive Web App - PWA).
+- **RF-22:** *When* el usuario hace clic en el botón de sol/luna, el sistema *shall* alternar toda la paleta de colores del juego (Modo Oscuro/Claro).
+- **RF-23:** *When* el usuario cambia el idioma en Ajustes, el sistema *shall* traducir toda la interfaz principal al instante.
+
 ## Fuera de Alcance (MVP Actual)
 - Multijugador en red (WebSockets).
 - Leaderboard global con backend.
