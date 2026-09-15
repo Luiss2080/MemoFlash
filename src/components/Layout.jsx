@@ -3,18 +3,19 @@ import { useState } from 'react';
 import { ManualModal } from './ManualModal';
 import { SettingsModal } from './SettingsModal';
 import { StatsModal } from './StatsModal';
+import { ProfileModal } from './ProfileModal';
 
-export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled, globalStats }) {
+export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled, globalStats, profile, setProfile }) {
   const [isManualOpen, setIsManualOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <div className="layout">
       <nav className="navbar">
-        <div className="nav-brand">
-          <span className="brand-icon">🧠</span>
-          <span>Memorama Premium</span>
+        <div className="logo cursor-pointer" onClick={() => setIsProfileOpen(true)} title="Editar Perfil">
+          <span>{profile.avatar} {profile.name}</span>
         </div>
         <div className="nav-actions">
           <button className="nav-btn" onClick={() => setIsStatsOpen(true)} title="Estadísticas">
@@ -43,11 +44,19 @@ export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled
         resetBestScore={resetBestScore}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
+        bgmEnabled={bgmEnabled}
+        setBgmEnabled={setBgmEnabled}
       />
       <StatsModal 
         isOpen={isStatsOpen} 
         onClose={() => setIsStatsOpen(false)}
         stats={globalStats} 
+      />
+      <ProfileModal 
+        isOpen={isProfileOpen} 
+        onClose={() => setIsProfileOpen(false)}
+        profile={profile}
+        setProfile={setProfile}
       />
     </div>
   );

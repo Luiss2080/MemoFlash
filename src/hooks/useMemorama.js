@@ -16,11 +16,13 @@ export const LEVELS = {
 };
 
 const INITIAL_STATS = { gamesPlayed: 0, gamesWon: 0, totalTime: 0 };
+const DEFAULT_PROFILE = { name: 'Jugador', avatar: '👽' };
 
 export function useMemorama() {
   const [level, setLevel] = useState('facil');
   const [theme, setTheme] = useState('emojis');
   const [isMultiplayer, setIsMultiplayer] = useState(false);
+  const [isTimeAttack, setIsTimeAttack] = useState(false);
   
   const [cards, setCards] = useState([]);
   const [flippedIndices, setFlippedIndices] = useState([]);
@@ -32,14 +34,30 @@ export function useMemorama() {
   const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isWon, setIsWon] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
   
   const [combo, setCombo] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [bgmEnabled, setBgmEnabled] = useState(false);
 
   // Multiplayer stats
   const [activePlayer, setActivePlayer] = useState(1);
   const [player1Score, setPlayer1Score] = useState(0);
   const [player2Score, setPlayer2Score] = useState(0);
+
+  // User Profile
+  const [profile, setProfileState] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('memorama-profile')) || DEFAULT_PROFILE;
+    } catch {
+      return DEFAULT_PROFILE;
+    }
+  });
+
+  const setProfile = (newProfile) => {
+    setProfileState(newProfile);
+    localStorage.setItem('memorama-profile', JSON.stringify(newProfile));
+  };
 
   const [bestScore, setBestScore] = useState(
     () => Number(localStorage.getItem('memorama-best')) || null
@@ -58,10 +76,16 @@ export function useMemorama() {
     localStorage.setItem('memorama-stats', JSON.stringify(newStats));
   };
 
-  const startGame = useCallback((lvl = level, thm = theme, multi = isMultiplayer) => {
+  useEffect(() => {
+    sound.toggleBgm(bgmEnabled);
+    return () => sound.toggleBgm(false);
+  }, [bgmEnabled]);
+
+  const startGame = useCallback((lvl = level, thm = theme, multi = isMultiplayer, ta = isTimeAttack) => {
     setLevel(lvl);
     setTheme(thm);
     setIsMultiplayer(multi);
+    setIsTimeAttack(ta);
     const pairCount = LEVELS[lvl].pairs;
     const selectedDeck = DECKS[thm].slice(0, pairCount);
     const deck = [...selectedDeck, ...selectedDeck]
@@ -74,31 +98,46 @@ export function useMemorama() {
     setIsLocked(false);
     setAttempts(0);
     setScore(0);
-    setTime(0);
+    setTime(ta ? 60 : 0);
     setCombo(0);
     setIsActive(false);
     setIsWon(false);
+    setIsGameOver(false);
     
     setActivePlayer(1);
     setPlayer1Score(0);
     setPlayer2Score(0);
-  }, [level, theme, isMultiplayer]);
+  }, [level, theme, isMultiplayer, isTimeAttack]);
 
   // Init game on mount
   useEffect(() => {
     startGame();
-  }, [startGame]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Timer logic
   useEffect(() => {
     let interval = null;
-    if (isActive && !isWon) {
-      interval = setInterval(() => setTime((t) => t + 1), 1000);
-    } else if (!isActive && time !== 0) {
+    if (isActive && !isWon && !isGameOver) {
+      interval = setInterval(() => {
+        setTime((t) => {
+          if (isTimeAttack) {
+            if (t <= 1) {
+              setIsGameOver(true);
+              setIsActive(false);
+              sound.error(soundEnabled); // Game over sound
+              return 0;
+            }
+            return t - 1;
+          }
+          return t + 1;
+        });
+      }, 1000);
+    } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isActive, isWon, time]);
+  }, [isActive, isWon, isGameOver, isTimeAttack, soundEnabled]);
 
   const addScoreToActivePlayer = (points) => {
     if (isMultiplayer) {
@@ -110,7 +149,7 @@ export function useMemorama() {
   };
 
   const flipCard = (index) => {
-    if (isLocked || isWon) return;
+    if (isLocked || isWon || isGameOver) return;
     if (flippedIndices.includes(index) || matchedIndices.includes(index)) return;
 
     if (!isActive) setIsActive(true); // Start timer on first click
@@ -134,11 +173,14 @@ export function useMemorama() {
         setCombo(currentCombo);
         
         const comboMultiplier = currentCombo > 1 ? currentCombo : 1;
-        addScoreToActivePlayer((100 + Math.max(0, 50 - time)) * comboMultiplier);
+        addScoreToActivePlayer((100 + Math.max(0, 50 - (isTimeAttack ? (60 - time) : time))) * comboMultiplier);
         
+        if (isTimeAttack) {
+            setTime(t => t + 5); // Add 5 seconds for a match in time attack
+        }
+
         setFlippedIndices([]);
         setIsLocked(false);
-        // Player stays on turn
       } else {
         // No match
         sound.error(soundEnabled);
@@ -153,7 +195,7 @@ export function useMemorama() {
   };
 
   const useHint = () => {
-    if (isLocked || isWon) return;
+    if (isLocked || isWon || isGameOver) return;
     const currentScore = isMultiplayer ? (activePlayer === 1 ? player1Score : player2Score) : score;
     if (currentScore < 200) return;
 
@@ -182,7 +224,9 @@ export function useMemorama() {
         colors: ['#8b5cf6', '#34d399', '#fbbf24', '#ec4899']
       });
 
-      const winBonus = Math.max(0, 1000 - time * 10);
+      let finalTime = isTimeAttack ? (60 - time) : time; // approximate time spent
+      const winBonus = Math.max(0, 1000 - finalTime * 10);
+      
       if (!isMultiplayer) {
         const finalScore = score + winBonus;
         setScore(finalScore);
@@ -197,10 +241,10 @@ export function useMemorama() {
       saveStats({
         gamesPlayed: globalStats.gamesPlayed + 1,
         gamesWon: globalStats.gamesWon + 1,
-        totalTime: globalStats.totalTime + time
+        totalTime: globalStats.totalTime + finalTime
       });
     }
-  }, [matchedIndices, cards.length, score, time, bestScore, isMultiplayer, isWon, globalStats, activePlayer]);
+  }, [matchedIndices, cards.length, score, time, bestScore, isMultiplayer, isWon, globalStats, activePlayer, isTimeAttack]);
 
   const resetBestScore = useCallback(() => {
     setBestScore(null);
@@ -209,27 +253,9 @@ export function useMemorama() {
   }, []);
 
   return {
-    cards,
-    flippedIndices,
-    matchedIndices,
-    attempts,
-    score,
-    time,
-    combo,
-    isWon,
-    bestScore,
-    level,
-    theme,
-    isMultiplayer,
-    activePlayer,
-    player1Score,
-    player2Score,
-    globalStats,
-    soundEnabled,
-    setSoundEnabled,
-    flipCard,
-    useHint,
-    startGame,
-    resetBestScore
+    cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, isGameOver, bestScore,
+    level, theme, isMultiplayer, isTimeAttack, activePlayer, player1Score, player2Score,
+    globalStats, profile, setProfile, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled,
+    flipCard, useHint, startGame, resetBestScore
   };
 }

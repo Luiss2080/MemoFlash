@@ -7,13 +7,23 @@ import './index.css';
 
 function App() {
   const {
-    cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, bestScore,
-    level, theme, soundEnabled, setSoundEnabled, flipCard, useHint, startGame, resetBestScore,
-    isMultiplayer, activePlayer, player1Score, player2Score, globalStats
+    cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, isGameOver, bestScore,
+    level, theme, isMultiplayer, isTimeAttack, activePlayer, player1Score, player2Score,
+    globalStats, profile, setProfile, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled,
+    flipCard, useHint, startGame, resetBestScore
   } = useMemorama();
 
   return (
-    <Layout resetBestScore={resetBestScore} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} globalStats={globalStats}>
+    <Layout 
+      resetBestScore={resetBestScore} 
+      soundEnabled={soundEnabled} 
+      setSoundEnabled={setSoundEnabled} 
+      bgmEnabled={bgmEnabled}
+      setBgmEnabled={setBgmEnabled}
+      globalStats={globalStats}
+      profile={profile}
+      setProfile={setProfile}
+    >
       <div className="app-container">
         <header className="header">
           <div className="controls">
@@ -28,9 +38,15 @@ function App() {
               <option value="codigo">Código 💻</option>
               <option value="banderas">Banderas 🇲🇽</option>
             </select>
-            <select value={isMultiplayer ? 'multi' : 'single'} onChange={(e) => startGame(level, theme, e.target.value === 'multi')} className="styled-select">
+            <select value={isTimeAttack ? 'timeattack' : (isMultiplayer ? 'multi' : 'single')} onChange={(e) => {
+              const val = e.target.value;
+              if (val === 'timeattack') startGame(level, theme, false, true);
+              else if (val === 'multi') startGame(level, theme, true, false);
+              else startGame(level, theme, false, false);
+            }} className="styled-select">
               <option value="single">1 Jugador</option>
               <option value="multi">2 Jugadores</option>
+              <option value="timeattack">Contrarreloj</option>
             </select>
             <button className="btn-primary flex-center" onClick={() => startGame()}>
               <RotateCcw size={18} /> Reiniciar
@@ -76,6 +92,15 @@ function App() {
             onFlip={flipCard} 
             level={level}
           />
+          {isGameOver && (
+            <div className="victory-overlay">
+              <div className="victory-card">
+                <h2>⏰ ¡Tiempo Agotado! ⏰</h2>
+                <p>Lograste <strong>{score}</strong> puntos en modo Contrarreloj.</p>
+                <button className="btn-primary large" onClick={() => startGame()}>Reintentar</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

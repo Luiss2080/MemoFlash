@@ -1,7 +1,7 @@
 import { Modal } from './Modal';
-import { Volume2, VolumeX, Trash2 } from 'lucide-react';
+import { Volume2, VolumeX, Trash2, Music } from 'lucide-react';
 
-export function SettingsModal({ isOpen, onClose, resetBestScore, soundEnabled, setSoundEnabled }) {
+export function SettingsModal({ isOpen, onClose, resetBestScore, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Configuración">
       <div className="settings-list">
@@ -20,6 +20,21 @@ export function SettingsModal({ isOpen, onClose, resetBestScore, soundEnabled, s
             {soundEnabled ? 'ON' : 'OFF'}
           </button>
         </div>
+
+        <div className="setting-item">
+          <div className="setting-info">
+            <Music size={20} className="text-purple-400"/>
+            <span>Música de Fondo (BGM)</span>
+          </div>
+          <button 
+            className={`toggle-btn ${bgmEnabled ? 'active' : ''}`}
+            onClick={() => setBgmEnabled(!bgmEnabled)}
+          >
+            {bgmEnabled ? 'ON' : 'OFF'}
+          </button>
+        </div>
+
+        <div className="settings-divider"></div>
 
         <div className="setting-item danger">
           <div className="setting-info">

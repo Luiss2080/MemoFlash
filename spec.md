@@ -39,6 +39,10 @@ Memorama es un juego clásico de memoria. Queremos modernizarlo con una interfaz
 - **RF-17:** *If* el modo es 2 Jugadores, el sistema *shall* llevar un marcador independiente para cada jugador y alternar el turno tras un fallo.
 - **RF-18:** *When* el jugador hace clic en el botón de Estadísticas, el sistema *shall* mostrar un modal con el histórico global persistido (`gamesPlayed`, `gamesWon`, `totalTime`).
 
+### Perfiles y Contrarreloj (Phase 5)
+- **RF-19:** *While* en la barra superior, el usuario *shall* poder abrir el `ProfileModal` para cambiar su Nombre y Avatar, los cuales se guardarán en localStorage.
+- **RF-20:** *If* el jugador selecciona el modo "Contrarreloj", el temporizador *shall* contar en reversa desde 60 segundos, sumando 5 segundos por cada acierto, y terminando el juego si llega a cero.
+
 ## Fuera de Alcance (MVP Actual)
 - Multijugador en red (WebSockets).
 - Leaderboard global con backend.
