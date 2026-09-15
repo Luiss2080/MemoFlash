@@ -40,6 +40,16 @@ export function useMemorama() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [bgmEnabled, setBgmEnabled] = useState(false);
 
+  const [lang, setLangState] = useState(() => localStorage.getItem('memorama-lang') || 'es');
+  const [themeMode, setThemeModeState] = useState(() => localStorage.getItem('memorama-theme') || 'dark');
+
+  const setLang = (l) => { setLangState(l); localStorage.setItem('memorama-lang', l); };
+  const setThemeMode = (t) => { setThemeModeState(t); localStorage.setItem('memorama-theme', t); };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode);
+  }, [themeMode]);
+
   // Multiplayer stats
   const [activePlayer, setActivePlayer] = useState(1);
   const [player1Score, setPlayer1Score] = useState(0);
@@ -256,6 +266,7 @@ export function useMemorama() {
     cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, isGameOver, bestScore,
     level, theme, isMultiplayer, isTimeAttack, activePlayer, player1Score, player2Score,
     globalStats, profile, setProfile, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled,
+    lang, setLang, themeMode, setThemeMode,
     flipCard, useHint, startGame, resetBestScore
   };
 }
