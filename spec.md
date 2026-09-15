@@ -34,8 +34,13 @@ Memorama es un juego clásico de memoria. Queremos modernizarlo con una interfaz
 - **RF-14:** *If* el jugador encuentra parejas de forma consecutiva (sin errores), el sistema *shall* activar un multiplicador de "Combo" para los puntos obtenidos.
 - **RF-15:** *When* el jugador usa el botón de "Pista", el sistema *shall* restar 200 puntos y mostrar temporalmente las cartas ocultas por 1 segundo.
 
+### Multijugador Local y Estadísticas
+- **RF-16:** *While* en la pantalla de inicio, el jugador *shall* poder elegir entre modo de 1 Jugador o 2 Jugadores (Multijugador Local).
+- **RF-17:** *If* el modo es 2 Jugadores, el sistema *shall* llevar un marcador independiente para cada jugador y alternar el turno tras un fallo.
+- **RF-18:** *When* el jugador hace clic en el botón de Estadísticas, el sistema *shall* mostrar un modal con el histórico global persistido (`gamesPlayed`, `gamesWon`, `totalTime`).
+
 ## Fuera de Alcance (MVP Actual)
-- Multijugador en tiempo real.
+- Multijugador en red (WebSockets).
 - Leaderboard global con backend.
 
 ## Criterios de Finalización (Definition of Done)
@@ -43,3 +48,4 @@ Memorama es un juego clásico de memoria. Queremos modernizarlo con una interfaz
 - La interfaz se adapta a dispositivos móviles y de escritorio.
 - El estado (puntuación/tema) se gestiona a través de custom hooks (`useMemorama`).
 - El diseño incluye CSS Vanilla premium (animaciones suaves, glassmorphism, sombras).
+- El sistema cuenta con pruebas unitarias automatizadas ejecutándose con éxito (Vitest).

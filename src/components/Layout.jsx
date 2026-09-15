@@ -1,11 +1,13 @@
-import { BookOpen, Settings as SettingsIcon, Github } from 'lucide-react';
+import { BookOpen, Settings as SettingsIcon, Github, BarChart2 } from 'lucide-react';
 import { useState } from 'react';
 import { ManualModal } from './ManualModal';
 import { SettingsModal } from './SettingsModal';
+import { StatsModal } from './StatsModal';
 
-export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled }) {
+export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled, globalStats }) {
   const [isManualOpen, setIsManualOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
 
   return (
     <div className="layout">
@@ -15,6 +17,9 @@ export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled
           <span>Memorama Premium</span>
         </div>
         <div className="nav-actions">
+          <button className="nav-btn" onClick={() => setIsStatsOpen(true)} title="Estadísticas">
+            <BarChart2 size={20} />
+          </button>
           <button className="nav-btn" onClick={() => setIsManualOpen(true)} title="Manual de Uso">
             <BookOpen size={20} />
           </button>
@@ -38,6 +43,11 @@ export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled
         resetBestScore={resetBestScore}
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
+      />
+      <StatsModal 
+        isOpen={isStatsOpen} 
+        onClose={() => setIsStatsOpen(false)}
+        stats={globalStats} 
       />
     </div>
   );

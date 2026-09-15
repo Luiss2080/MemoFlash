@@ -12,6 +12,8 @@ La puntuación no se basa solo en el número de aciertos, sino en la rapidez y l
    - El jugador puede revelar las cartas por 1 segundo sacrificando **200 puntos**. No puede usarse si no se tienen puntos suficientes.
 3. **Puntos de Victoria:**
    - Al ganar la partida (completar todas las parejas), se otorga un bono masivo por el tiempo total empleado: `Math.max(0, 1000 - time * 10)`.
+4. **Multijugador (Turnos):**
+   - En el modo de 2 Jugadores, los jugadores acumulan puntos por separado. El bono de tiempo por acertar se sigue calculando en base al tiempo global de la partida. El bono final de victoria se suma al jugador que encuentra la última pareja.
 
 ### Efectos de Sonido
 Se utiliza la **Web Audio API** nativa (`src/utils/audio.js`) para sintetizar osciladores dinámicos. Esto evita la carga de archivos de audio externos, mejorando el rendimiento y peso de la app. Los efectos incluyen flip, match, error y victoria.

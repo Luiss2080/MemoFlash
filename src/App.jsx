@@ -8,11 +8,12 @@ import './index.css';
 function App() {
   const {
     cards, flippedIndices, matchedIndices, attempts, score, time, combo, isWon, bestScore,
-    level, theme, soundEnabled, setSoundEnabled, flipCard, useHint, startGame, resetBestScore
+    level, theme, soundEnabled, setSoundEnabled, flipCard, useHint, startGame, resetBestScore,
+    isMultiplayer, activePlayer, player1Score, player2Score, globalStats
   } = useMemorama();
 
   return (
-    <Layout resetBestScore={resetBestScore} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}>
+    <Layout resetBestScore={resetBestScore} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} globalStats={globalStats}>
       <div className="app-container">
         <header className="header">
           <div className="controls">
@@ -21,9 +22,15 @@ function App() {
                 <option key={key} value={key}>{lvl.name}</option>
               ))}
             </select>
-            <select value={theme} onChange={(e) => startGame(level, e.target.value)} className="styled-select">
+            <select value={theme} onChange={(e) => startGame(level, e.target.value, isMultiplayer)} className="styled-select">
               <option value="emojis">Emojis 🍎</option>
               <option value="animales">Animales 🐶</option>
+              <option value="codigo">Código 💻</option>
+              <option value="banderas">Banderas 🇲🇽</option>
+            </select>
+            <select value={isMultiplayer ? 'multi' : 'single'} onChange={(e) => startGame(level, theme, e.target.value === 'multi')} className="styled-select">
+              <option value="single">1 Jugador</option>
+              <option value="multi">2 Jugadores</option>
             </select>
             <button className="btn-primary flex-center" onClick={() => startGame()}>
               <RotateCcw size={18} /> Reiniciar
@@ -34,15 +41,29 @@ function App() {
           </div>
         </header>
 
-        <ScoreBoard attempts={attempts} score={score} time={time} bestScore={bestScore} combo={combo} />
+        <ScoreBoard 
+          attempts={attempts} 
+          score={score} 
+          time={time} 
+          bestScore={bestScore} 
+          combo={combo} 
+          isMultiplayer={isMultiplayer}
+          activePlayer={activePlayer}
+          player1Score={player1Score}
+          player2Score={player2Score}
+        />
         
         <div className="board-container">
           {isWon && (
             <div className="victory-overlay">
               <div className="victory-card">
-                <h2>🎉 ¡Victoria! 🎉</h2>
-                <p>Has completado el tablero en <strong>{time}</strong> segundos con <strong>{attempts}</strong> intentos.</p>
-                <p className="final-score">Puntuación Total: <span>{score}</span></p>
+                <h2>🎉 ¡Juego Terminado! 🎉</h2>
+                <p>Has completado el tablero en <strong>{time}</strong> segundos.</p>
+                {isMultiplayer ? (
+                  <p className="final-score">Ganador: <span>{player1Score > player2Score ? 'P1' : player1Score < player2Score ? 'P2' : 'Empate'}</span></p>
+                ) : (
+                  <p className="final-score">Puntuación Total: <span>{score}</span></p>
+                )}
                 <button className="btn-primary large" onClick={() => startGame()}>Jugar de Nuevo</button>
               </div>
             </div>

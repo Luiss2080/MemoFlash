@@ -2,9 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { sound } from '../utils/audio';
 
-const DECKS = {
+export const DECKS = {
   emojis: ['🍎', '🍌', '🍇', '🍉', '🍓', '🍒', '🍍', '🥝', '🥑', '🥥', '🍔', '🍟', '🍕', '🌭', '🍩', '🍪', '🍫', '🍬'],
-  animales: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦']
+  animales: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦'],
+  codigo: ['💻', '⚙️', '🖥️', '📡', '🔌', '🔋', '💾', '💿', '📱', '📟', '⌨️', '🖱️', '🖲️', '🕹️', '🗜️', '💡', '🔦', '🔧'],
+  banderas: ['🇲🇽', '🇪🇸', '🇺🇸', '🇨🇦', '🇧🇷', '🇦🇷', '🇨🇴', '🇨🇱', '🇵🇪', '🇯🇵', '🇰🇷', '🇨🇳', '🇩🇪', '🇫🇷', '🇮🇹', '🇬🇧', '🇷🇺', '🇮🇳']
 };
 
 export const LEVELS = {
@@ -13,9 +15,13 @@ export const LEVELS = {
   dificil: { name: 'Difícil (6x6)', pairs: 18 }
 };
 
+const INITIAL_STATS = { gamesPlayed: 0, gamesWon: 0, totalTime: 0 };
+
 export function useMemorama() {
   const [level, setLevel] = useState('facil');
   const [theme, setTheme] = useState('emojis');
+  const [isMultiplayer, setIsMultiplayer] = useState(false);
+  
   const [cards, setCards] = useState([]);
   const [flippedIndices, setFlippedIndices] = useState([]);
   const [matchedIndices, setMatchedIndices] = useState([]);
@@ -30,13 +36,32 @@ export function useMemorama() {
   const [combo, setCombo] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
+  // Multiplayer stats
+  const [activePlayer, setActivePlayer] = useState(1);
+  const [player1Score, setPlayer1Score] = useState(0);
+  const [player2Score, setPlayer2Score] = useState(0);
+
   const [bestScore, setBestScore] = useState(
     () => Number(localStorage.getItem('memorama-best')) || null
   );
 
-  const startGame = useCallback((lvl = level, thm = theme) => {
+  const [globalStats, setGlobalStats] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('memorama-stats')) || INITIAL_STATS;
+    } catch {
+      return INITIAL_STATS;
+    }
+  });
+
+  const saveStats = (newStats) => {
+    setGlobalStats(newStats);
+    localStorage.setItem('memorama-stats', JSON.stringify(newStats));
+  };
+
+  const startGame = useCallback((lvl = level, thm = theme, multi = isMultiplayer) => {
     setLevel(lvl);
     setTheme(thm);
+    setIsMultiplayer(multi);
     const pairCount = LEVELS[lvl].pairs;
     const selectedDeck = DECKS[thm].slice(0, pairCount);
     const deck = [...selectedDeck, ...selectedDeck]
@@ -53,7 +78,11 @@ export function useMemorama() {
     setCombo(0);
     setIsActive(false);
     setIsWon(false);
-  }, [level, theme]);
+    
+    setActivePlayer(1);
+    setPlayer1Score(0);
+    setPlayer2Score(0);
+  }, [level, theme, isMultiplayer]);
 
   // Init game on mount
   useEffect(() => {
@@ -70,6 +99,15 @@ export function useMemorama() {
     }
     return () => clearInterval(interval);
   }, [isActive, isWon, time]);
+
+  const addScoreToActivePlayer = (points) => {
+    if (isMultiplayer) {
+      if (activePlayer === 1) setPlayer1Score(s => s + points);
+      else setPlayer2Score(s => s + points);
+    } else {
+      setScore(s => s + points);
+    }
+  };
 
   const flipCard = (index) => {
     if (isLocked || isWon) return;
@@ -95,27 +133,31 @@ export function useMemorama() {
         const currentCombo = combo + 1;
         setCombo(currentCombo);
         
-        // Multiplier based on combo
         const comboMultiplier = currentCombo > 1 ? currentCombo : 1;
-        setScore(s => s + (100 + Math.max(0, 50 - time)) * comboMultiplier); 
+        addScoreToActivePlayer((100 + Math.max(0, 50 - time)) * comboMultiplier);
         
         setFlippedIndices([]);
         setIsLocked(false);
+        // Player stays on turn
       } else {
         // No match
         sound.error(soundEnabled);
-        setCombo(0); // Reset combo
+        setCombo(0); 
         setTimeout(() => {
           setFlippedIndices([]);
           setIsLocked(false);
+          if (isMultiplayer) setActivePlayer(prev => prev === 1 ? 2 : 1);
         }, 800);
       }
     }
   };
 
   const useHint = () => {
-    if (isLocked || isWon || score < 200) return;
-    setScore(s => s - 200);
+    if (isLocked || isWon) return;
+    const currentScore = isMultiplayer ? (activePlayer === 1 ? player1Score : player2Score) : score;
+    if (currentScore < 200) return;
+
+    addScoreToActivePlayer(-200);
     const hidden = cards.map((_, i) => i).filter(i => !matchedIndices.includes(i));
     setFlippedIndices(hidden);
     setIsLocked(true);
@@ -128,12 +170,11 @@ export function useMemorama() {
 
   // Check win condition
   useEffect(() => {
-    if (cards.length > 0 && matchedIndices.length === cards.length) {
+    if (cards.length > 0 && matchedIndices.length === cards.length && !isWon) {
       setIsWon(true);
       setIsActive(false);
       sound.win(soundEnabled);
       
-      // Lanzar confetti
       confetti({
         particleCount: 150,
         spread: 70,
@@ -141,18 +182,30 @@ export function useMemorama() {
         colors: ['#8b5cf6', '#34d399', '#fbbf24', '#ec4899']
       });
 
-      const currentScore = score + Math.max(0, 1000 - time * 10);
-      setScore(currentScore);
-      if (!bestScore || currentScore > bestScore) {
-        setBestScore(currentScore);
-        localStorage.setItem('memorama-best', currentScore);
+      const winBonus = Math.max(0, 1000 - time * 10);
+      if (!isMultiplayer) {
+        const finalScore = score + winBonus;
+        setScore(finalScore);
+        if (!bestScore || finalScore > bestScore) {
+          setBestScore(finalScore);
+          localStorage.setItem('memorama-best', finalScore);
+        }
+      } else {
+        addScoreToActivePlayer(winBonus);
       }
+
+      saveStats({
+        gamesPlayed: globalStats.gamesPlayed + 1,
+        gamesWon: globalStats.gamesWon + 1,
+        totalTime: globalStats.totalTime + time
+      });
     }
-  }, [matchedIndices, cards.length, score, time, bestScore]);
+  }, [matchedIndices, cards.length, score, time, bestScore, isMultiplayer, isWon, globalStats, activePlayer]);
 
   const resetBestScore = useCallback(() => {
     setBestScore(null);
     localStorage.removeItem('memorama-best');
+    saveStats(INITIAL_STATS);
   }, []);
 
   return {
@@ -167,6 +220,11 @@ export function useMemorama() {
     bestScore,
     level,
     theme,
+    isMultiplayer,
+    activePlayer,
+    player1Score,
+    player2Score,
+    globalStats,
     soundEnabled,
     setSoundEnabled,
     flipCard,
