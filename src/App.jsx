@@ -1,122 +1,58 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useMemorama, LEVELS } from './hooks/useMemorama';
+import { Board } from './components/Board';
+import { ScoreBoard } from './components/ScoreBoard';
+import './index.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const {
+    cards, flippedIndices, matchedIndices, attempts, score, time, isWon, bestScore,
+    level, theme, flipCard, startGame
+  } = useMemorama();
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-container">
+      <header className="header">
+        <h1>🧠 Memorama Premium</h1>
+        <div className="controls">
+          <select value={level} onChange={(e) => startGame(e.target.value, theme)}>
+            {Object.entries(LEVELS).map(([key, lvl]) => (
+              <option key={key} value={key}>{lvl.name}</option>
+            ))}
+          </select>
+          <select value={theme} onChange={(e) => startGame(level, e.target.value)}>
+            <option value="emojis">Emojis 🍎</option>
+            <option value="animales">Animales 🐶</option>
+          </select>
+          <button className="btn-primary" onClick={() => startGame()}>🔄 Reiniciar</button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="main-content">
+        <ScoreBoard attempts={attempts} score={score} time={time} bestScore={bestScore} />
+        
+        <div className="board-container">
+          {isWon && (
+            <div className="victory-overlay">
+              <div className="victory-card">
+                <h2>🎉 ¡Victoria! 🎉</h2>
+                <p>Has completado el tablero en <strong>{time}</strong> segundos con <strong>{attempts}</strong> intentos.</p>
+                <p className="final-score">Puntuación Total: <span>{score}</span></p>
+                <button className="btn-primary large" onClick={() => startGame()}>Jugar de Nuevo</button>
+              </div>
+            </div>
+          )}
+          
+          <Board 
+            cards={cards} 
+            flippedIndices={flippedIndices} 
+            matchedIndices={matchedIndices} 
+            onFlip={flipCard} 
+            level={level}
+          />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
