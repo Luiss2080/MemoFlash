@@ -1,43 +1,43 @@
-import { BookOpen, Settings as SettingsIcon, Github, BarChart2 } from 'lucide-react';
+import { BookOpen, Settings as SettingsIcon, BarChart2, Sun, Moon } from 'lucide-react';
 import { useState } from 'react';
 import { ManualModal } from './ManualModal';
 import { SettingsModal } from './SettingsModal';
 import { StatsModal } from './StatsModal';
 import { ProfileModal } from './ProfileModal';
+import { getDict } from '../utils/i18n';
 
-export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled, globalStats, profile, setProfile }) {
+export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled, globalStats, profile, setProfile, lang, setLang, themeMode, setThemeMode }) {
   const [isManualOpen, setIsManualOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const t = getDict(lang);
+
   return (
     <div className="layout">
-      <nav className="navbar">
-        <div className="logo cursor-pointer" onClick={() => setIsProfileOpen(true)} title="Editar Perfil">
-          <span>{profile.avatar} {profile.name}</span>
-        </div>
-        <div className="nav-actions">
-          <button className="nav-btn" onClick={() => setIsStatsOpen(true)} title="Estadísticas">
-            <BarChart2 size={20} />
-          </button>
-          <button className="nav-btn" onClick={() => setIsManualOpen(true)} title="Manual de Uso">
-            <BookOpen size={20} />
-          </button>
-          <button className="nav-btn" onClick={() => setIsSettingsOpen(true)} title="Configuración">
-            <SettingsIcon size={20} />
-          </button>
-          <a href="#" className="nav-btn" title="Ver código fuente">
-            <Github size={20} />
-          </a>
-        </div>
-      </nav>
-
       <main className="layout-content">
         {children}
       </main>
+      <nav className="floating-dock">
+        <div className="logo cursor-pointer" onClick={() => setIsProfileOpen(true)} title={t.profile}>
+          <span>{profile.avatar}</span>
+        </div>
+        <button className="nav-btn" onClick={() => setIsStatsOpen(true)} title={t.stats}>
+          <BarChart2 size={20} />
+        </button>
+        <button className="nav-btn" onClick={() => setIsManualOpen(true)} title={t.manual}>
+          <BookOpen size={20} />
+        </button>
+        <button className="nav-btn" onClick={() => setThemeMode(themeMode === 'dark' ? 'light' : 'dark')} title={t.theme}>
+          {themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+        <button className="nav-btn" onClick={() => setIsSettingsOpen(true)} title={t.settings}>
+          <SettingsIcon size={20} />
+        </button>
+      </nav>
 
-      <ManualModal isOpen={isManualOpen} onClose={() => setIsManualOpen(false)} />
+      <ManualModal isOpen={isManualOpen} onClose={() => setIsManualOpen(false)} lang={lang} />
       <SettingsModal 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
@@ -46,17 +46,21 @@ export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled
         setSoundEnabled={setSoundEnabled}
         bgmEnabled={bgmEnabled}
         setBgmEnabled={setBgmEnabled}
+        lang={lang}
+        setLang={setLang}
       />
       <StatsModal 
         isOpen={isStatsOpen} 
         onClose={() => setIsStatsOpen(false)}
-        stats={globalStats} 
+        stats={globalStats}
+        lang={lang}
       />
       <ProfileModal 
         isOpen={isProfileOpen} 
         onClose={() => setIsProfileOpen(false)}
         profile={profile}
         setProfile={setProfile}
+        lang={lang}
       />
     </div>
   );
