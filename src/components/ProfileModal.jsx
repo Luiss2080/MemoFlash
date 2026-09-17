@@ -42,7 +42,7 @@ export function ProfileModal({ isOpen, onClose, profile, setProfile, lang }) {
             ))}
           </div>
         </div>
-        <button className="btn-primary flex-center w-full mt-6" onClick={handleSave} style={{width: '100%'}}>
+        <button className="btn-primary flex-center w-full mt-6" onClick={handleSave}>
           <Save size={18}/> {t.save_profile}
         </button>
       </div>
