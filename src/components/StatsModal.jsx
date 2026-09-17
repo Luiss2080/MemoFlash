@@ -9,21 +9,21 @@ export function StatsModal({ isOpen, onClose, stats, lang }) {
     <Modal isOpen={isOpen} onClose={onClose} title={t.stats}>
       <div className="stats-container">
         <div className="stat-card">
-          <Trophy size={32} style={{ color: '#fbbf24' }} />
+          <Trophy size={32} className="stat-icon-gold" />
           <div className="stat-info">
             <span className="stat-value">{stats.gamesWon}</span>
             <span className="stat-label">{t.games_won}</span>
           </div>
         </div>
         <div className="stat-card">
-          <BarChart size={32} style={{ color: '#60a5fa' }} />
+          <BarChart size={32} className="stat-icon-blue" />
           <div className="stat-info">
             <span className="stat-value">{stats.gamesPlayed}</span>
             <span className="stat-label">{t.games_played}</span>
           </div>
         </div>
         <div className="stat-card">
-          <Clock size={32} style={{ color: '#34d399' }} />
+          <Clock size={32} className="stat-icon-green" />
           <div className="stat-info">
             <span className="stat-value">{Math.floor(stats.totalTime / 60)}m {stats.totalTime % 60}s</span>
             <span className="stat-label">{t.total_time}</span>

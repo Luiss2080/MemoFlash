@@ -18,6 +18,27 @@ export const LEVELS = {
 const INITIAL_STATS = { gamesPlayed: 0, gamesWon: 0, totalTime: 0 };
 const DEFAULT_PROFILE = { name: 'Jugador', avatar: '👽' };
 
+// Scoring
+const POINTS_PER_MATCH = 100;
+const SPEED_BONUS_CAP = 50; // max bonus points for matching almost instantly
+const HINT_COST = 200;
+const WIN_BONUS_BASE = 1000;
+const WIN_BONUS_TIME_PENALTY = 10; // points subtracted per second spent
+
+// Timing
+const MISMATCH_FLIP_BACK_MS = 800;
+const HINT_REVEAL_MS = 1000;
+const TIMER_TICK_MS = 1000;
+
+// Time Attack mode
+const TIME_ATTACK_DURATION_S = 60;
+const TIME_ATTACK_BONUS_PER_MATCH_S = 5;
+
+// Win celebration
+const CONFETTI_PARTICLE_COUNT = 150;
+const CONFETTI_SPREAD = 70;
+const CONFETTI_COLORS = ['#8b5cf6', '#34d399', '#fbbf24', '#ec4899'];
+
 export function useMemorama() {
   const [level, setLevel] = useState('facil');
   const [theme, setTheme] = useState('emojis');
@@ -135,7 +156,7 @@ export function useMemorama() {
     setIsLocked(false);
     setAttempts(0);
     setScore(0);
-    setTime(ta ? 60 : 0);
+    setTime(ta ? TIME_ATTACK_DURATION_S : 0);
     setCombo(0);
     setIsActive(false);
     setIsWon(false);
@@ -169,21 +190,21 @@ export function useMemorama() {
           }
           return t + 1;
         });
-      }, 1000);
+      }, TIMER_TICK_MS);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [isActive, isWon, isGameOver, isTimeAttack, soundEnabled]);
 
-  const addScoreToActivePlayer = (points) => {
+  const addScoreToActivePlayer = useCallback((points) => {
     if (isMultiplayer) {
       if (activePlayer === 1) setPlayer1Score(s => s + points);
       else setPlayer2Score(s => s + points);
     } else {
       setScore(s => s + points);
     }
-  };
+  }, [isMultiplayer, activePlayer]);
 
   const flipCard = (index) => {
     if (isLocked || isWon || isGameOver) return;
@@ -210,10 +231,12 @@ export function useMemorama() {
         setCombo(currentCombo);
         
         const comboMultiplier = currentCombo > 1 ? currentCombo : 1;
-        addScoreToActivePlayer((100 + Math.max(0, 50 - (isTimeAttack ? (60 - time) : time))) * comboMultiplier);
-        
+        const elapsed = isTimeAttack ? (TIME_ATTACK_DURATION_S - time) : time;
+        const speedBonus = Math.max(0, SPEED_BONUS_CAP - elapsed);
+        addScoreToActivePlayer((POINTS_PER_MATCH + speedBonus) * comboMultiplier);
+
         if (isTimeAttack) {
-            setTime(t => t + 5); // Add 5 seconds for a match in time attack
+            setTime(t => t + TIME_ATTACK_BONUS_PER_MATCH_S);
         }
 
         setFlippedIndices([]);
@@ -227,7 +250,7 @@ export function useMemorama() {
           setFlippedIndices([]);
           setIsLocked(false);
           if (isMultiplayer) setActivePlayer(prev => prev === 1 ? 2 : 1);
-        }, 800);
+        }, MISMATCH_FLIP_BACK_MS);
       }
     }
   };
@@ -235,9 +258,9 @@ export function useMemorama() {
   const useHint = () => {
     if (isLocked || isWon || isGameOver) return;
     const currentScore = isMultiplayer ? (activePlayer === 1 ? player1Score : player2Score) : score;
-    if (currentScore < 200) return;
+    if (currentScore < HINT_COST) return;
 
-    addScoreToActivePlayer(-200);
+    addScoreToActivePlayer(-HINT_COST);
     const hidden = cards.map((_, i) => i).filter(i => !matchedIndices.includes(i));
     setFlippedIndices(hidden);
     setIsLocked(true);
@@ -245,7 +268,7 @@ export function useMemorama() {
       hintTimeoutRef.current = null;
       setFlippedIndices([]);
       setIsLocked(false);
-    }, 1000);
+    }, HINT_REVEAL_MS);
   };
 
 
@@ -255,16 +278,16 @@ export function useMemorama() {
       setIsWon(true);
       setIsActive(false);
       sound.win(soundEnabled);
-      
+
       confetti({
-        particleCount: 150,
-        spread: 70,
+        particleCount: CONFETTI_PARTICLE_COUNT,
+        spread: CONFETTI_SPREAD,
         origin: { y: 0.6 },
-        colors: ['#8b5cf6', '#34d399', '#fbbf24', '#ec4899']
+        colors: CONFETTI_COLORS
       });
 
-      let finalTime = isTimeAttack ? (60 - time) : time; // approximate time spent
-      const winBonus = Math.max(0, 1000 - finalTime * 10);
+      let finalTime = isTimeAttack ? (TIME_ATTACK_DURATION_S - time) : time; // approximate time spent
+      const winBonus = Math.max(0, WIN_BONUS_BASE - finalTime * WIN_BONUS_TIME_PENALTY);
       
       if (!isMultiplayer) {
         const finalScore = score + winBonus;
@@ -283,7 +306,7 @@ export function useMemorama() {
         totalTime: globalStats.totalTime + finalTime
       });
     }
-  }, [matchedIndices, cards.length, score, time, bestScore, isMultiplayer, isWon, globalStats, activePlayer, isTimeAttack]);
+  }, [matchedIndices, cards.length, score, time, bestScore, isMultiplayer, isWon, globalStats, activePlayer, isTimeAttack, soundEnabled, addScoreToActivePlayer]);
 
   const resetBestScore = useCallback(() => {
     setBestScore(null);

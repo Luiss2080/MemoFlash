@@ -1,7 +1,7 @@
-import { Timer, RotateCcw, Star, Trophy, Flame } from 'lucide-react';
+import { Timer, Star, Trophy, Flame } from 'lucide-react';
 import { getDict } from '../utils/i18n';
 
-export function ScoreBoard({ attempts, score, time, bestScore, combo, isMultiplayer, activePlayer, player1Score, player2Score, lang }) {
+export function ScoreBoard({ score, time, bestScore, combo, isMultiplayer, activePlayer, player1Score, player2Score, lang }) {
   const formatTime = (s) => {
     const mins = Math.floor(s / 60);
     const secs = s % 60;

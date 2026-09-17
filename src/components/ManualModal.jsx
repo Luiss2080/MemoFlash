@@ -1,5 +1,5 @@
 import { Modal } from './Modal';
-import { BookOpen, Trophy, Clock, CheckCircle } from 'lucide-react';
+import { BookOpen, Trophy, Clock } from 'lucide-react';
 import { getDict } from '../utils/i18n';
 
 export function ManualModal({ isOpen, onClose, lang }) {
