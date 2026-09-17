@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useMemorama, LEVELS } from '../hooks/useMemorama';
+import { useMemorama } from '../hooks/useMemorama';
 
 describe('useMemorama Hook', () => {
   beforeEach(() => {

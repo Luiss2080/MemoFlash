@@ -1,5 +1,5 @@
 import { Modal } from './Modal';
-import { Volume2, VolumeX, Trash2, Music, Globe } from 'lucide-react';
+import { Volume2, Trash2, Music, Globe } from 'lucide-react';
 import { getDict } from '../utils/i18n';
 
 export function SettingsModal({ isOpen, onClose, resetBestScore, soundEnabled, setSoundEnabled, bgmEnabled, setBgmEnabled, lang, setLang }) {
