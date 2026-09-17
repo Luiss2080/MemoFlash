@@ -1,6 +1,6 @@
 export const dict = {
   es: {
-    title: 'Memorama Premium',
+    title: 'MemoFlash',
     stats: 'Estadísticas',
     manual: 'Manual de Uso',
     settings: 'Configuración',
@@ -32,10 +32,17 @@ export const dict = {
     dark: 'Oscuro',
     save_profile: 'Guardar Perfil',
     choose_avatar: 'Elige tu Avatar',
-    player_name: 'Nombre de Jugador'
+    player_name: 'Nombre de Jugador',
+    card_hidden: (pos) => `Carta ${pos}, boca abajo`,
+    card_revealed: (pos, content) => `Carta ${pos}, volteada: ${content}`,
+    card_matched: (pos, content) => `Carta ${pos}, pareja encontrada: ${content}`,
+    progress_status: (found, total, score) => `${found} de ${total} parejas encontradas. Puntuación: ${score}.`,
+    progress_status_multi: (found, total, p1, p2) => `${found} de ${total} parejas encontradas. Jugador 1: ${p1} puntos. Jugador 2: ${p2} puntos.`,
+    win_announcement: '¡Juego terminado! Encontraste todas las parejas.',
+    timeout_announcement: '¡Se acabó el tiempo!'
   },
   en: {
-    title: 'Premium Memory',
+    title: 'MemoFlash',
     stats: 'Statistics',
     manual: 'User Manual',
     settings: 'Settings',
@@ -67,8 +74,19 @@ export const dict = {
     dark: 'Dark',
     save_profile: 'Save Profile',
     choose_avatar: 'Choose Avatar',
-    player_name: 'Player Name'
+    player_name: 'Player Name',
+    card_hidden: (pos) => `Card ${pos}, face down`,
+    card_revealed: (pos, content) => `Card ${pos}, flipped: ${content}`,
+    card_matched: (pos, content) => `Card ${pos}, matched: ${content}`,
+    progress_status: (found, total, score) => `${found} of ${total} pairs found. Score: ${score}.`,
+    progress_status_multi: (found, total, p1, p2) => `${found} of ${total} pairs found. Player 1: ${p1} points. Player 2: ${p2} points.`,
+    win_announcement: 'Game over! You found every pair.',
+    timeout_announcement: 'Time is up!'
   }
 };
 
-export const getDict = (lang) => dict[lang] || dict['es'];
+// Falls back key-by-key to Spanish (the base language) so a translation
+// added to one language but not yet ported to the others never renders
+// "undefined" in the UI or throws when a caller expects a function (e.g.
+// t.card_hidden(pos)).
+export const getDict = (lang) => ({ ...dict.es, ...(dict[lang] || {}) });

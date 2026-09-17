@@ -1,7 +1,7 @@
-# Contexto de Memorama
+# Contexto de MemoFlash
 
 ## Acerca del Proyecto
-- **Propósito:** Modernizar un juego de Memorama (pares) introduciendo valor comercial, diferentes niveles de dificultad, temáticas y un sistema de puntuación.
+- **Propósito:** Modernizar un juego de memorama (pares) introduciendo valor comercial bajo la marca **MemoFlash**, con diferentes niveles de dificultad, temáticas y un sistema de puntuación.
 - **Tecnologías:** React, Vite, CSS Vanilla.
 - **Metodología:** Spec-Driven Development (SDD). La única fuente de la verdad funcional es `spec.md`.
 

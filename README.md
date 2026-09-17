@@ -1,7 +1,7 @@
 <div align="center">
-  <h1>🧠 Memorama Premium</h1>
-  <p><strong>El clásico juego de memoria, llevado al límite arquitectónico moderno.</strong></p>
-  
+  <h1>⚡ MemoFlash</h1>
+  <p><strong>El clásico juego de memoria (memorama), reinventado como una PWA moderna, rápida e instalable.</strong></p>
+
   <p>
     <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
     <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
@@ -15,72 +15,104 @@
 
 ## 🌟 Descripción
 
-**Memorama Premium** no es solo un juego de emparejar cartas; es una **Progressive Web App (PWA)** desarrollada con React y Vite, diseñada para ofrecer una experiencia *Enterprise-Grade* con una interfaz de usuario hiper-realista, animaciones físicas, soporte multi-idioma, y una banda sonora nativa de 8-bits generada con algoritmos matemáticos.
+**MemoFlash** no es solo un juego de emparejar cartas: es una **Progressive Web App (PWA)** construida con React y Vite, pensada para instalarse como una app nativa y jugarse offline, con interfaz "glassmorphism", animaciones físicas, soporte multi-idioma y una banda sonora de 8-bits generada en tiempo real con la Web Audio API (sin archivos de audio externos).
 
 > [!TIP]
 > **¡Instálalo como App Nativa!**
-> Gracias a su arquitectura PWA y sus Service Workers, puedes abrir el juego en tu celular (iOS/Android) o computadora, instalarlo en tu escritorio y **jugar 100% Offline** sin conexión a internet.
+> Gracias a su Service Worker y manifiesto PWA (`vite-plugin-pwa`), puedes instalar MemoFlash en tu celular o computadora y jugar sin conexión a internet.
 
 ---
 
-## 🚀 Características Principales
+## 🚀 Características
 
-### 🎮 Modos de Juego
-- **Modo Solitario:** Encuentra las parejas en el menor tiempo posible para establecer tu récord.
-- **Modo Contrarreloj (Time Attack):** ¡60 segundos en el reloj! Cada acierto te da 5 segundos extra. Si llegas a 0, Game Over.
-- **Multijugador Local (1 vs 1):** Juega con un amigo en la misma pantalla. La app gestiona los turnos y los puntajes de manera inteligente.
+### 🎮 Modos de juego
+- **Modo Solitario:** encuentra todas las parejas en el menor tiempo y con los menos intentos posibles para superar tu Mejor Puntaje.
+- **Contrarreloj (Time Attack):** empiezas con 60 segundos; cada acierto suma +5s; si el reloj llega a 0, termina la partida.
+- **Multijugador Local (1 vs 1):** dos jugadores comparten pantalla y turno; cada fallo pasa el turno al otro jugador y cada uno lleva su propio marcador.
 
-### 🎨 Diseño y UX de Vanguardia
-- **Floating Dock:** Interfaz estilo macOS en la parte inferior para una navegación ergonómica en móviles.
-- **Temas Dinámicos:** Cambia entre **Modo Oscuro** (Mesh Gradient) y **Modo Claro** en tiempo real.
-- **Framer Motion:** Animaciones físicas con inercia y rebote para las cartas y ventanas modales.
-- **Multi-Idioma (i18n):** Interfaz traducida instantáneamente a Español e Inglés.
+### 🃏 Dificultad y temas
+- Tres dificultades: **Fácil** (4x4, 8 parejas), **Medio** (4x6, 12 parejas) y **Difícil** (6x6, 18 parejas).
+- Cuatro mazos temáticos de emojis: Emojis de comida, Animales, Código/Tecnología y Banderas.
 
-### 🎵 Inmersión Total
-- **Música de Fondo (BGM):** Arpegios nostálgicos sintetizados nativamente en el navegador vía *Web Audio API*.
-- **Combos y Pistas:** Gana multiplicadores de puntos por aciertos consecutivos. Usa tus puntos para comprar "Pistas" visuales.
-- **Perfiles Locales:** Elige tu Avatar (👽👻🤖) y tu Nombre. Tus estadísticas y victorias se guardan en el historial del navegador automáticamente (`localStorage`).
+### 🏆 Puntuación
+- +100 puntos por pareja encontrada, más un bono por rapidez (hasta +50).
+- Multiplicador de combo: aciertos consecutivos multiplican los puntos del turno (x2, x3...); un fallo lo reinicia a cero.
+- Pista: revela el tablero por 1 segundo a cambio de 200 puntos (requiere saldo suficiente).
+- Bono de victoria al completar el tablero, mayor cuanto menor sea el tiempo total empleado.
 
----
+### 🎨 Interfaz
+- **Floating Dock:** navegación inferior estilo macOS con accesos a Perfil, Estadísticas, Manual, Tema y Configuración.
+- **Modo Oscuro / Claro** intercambiable en tiempo real vía variables CSS.
+- **Multi-idioma (i18n):** interfaz completa en Español e Inglés, con selector en Configuración.
+- Cartas navegables por teclado (Tab + Enter/Espacio), además de mouse/touch.
+- Perfil local (nombre + avatar) y estadísticas globales (partidas jugadas, victorias, tiempo total) persistidas en `localStorage`.
 
-## 🛠️ Tecnologías Utilizadas
-
-- **Frontend Core:** React, Vite.
-- **Animaciones:** Framer Motion, Canvas Confetti.
-- **Estilos:** CSS Vanilla puro (Glassmorphism, CSS Variables para temas).
-- **Iconografía:** Lucide React.
-- **Audio:** Web Audio API (Sintetizador nativo, 0 dependencias).
-- **Testing:** Vitest, React Testing Library.
-- **PWA:** Vite PWA Plugin.
+### 🎵 Audio
+- Efectos de sonido (flip, acierto, error, victoria) y música de fondo generados en el navegador con osciladores de la **Web Audio API** — no se cargan archivos de audio.
 
 ---
 
-## ⚙️ Instalación y Uso Local
+## 🕹️ Cómo jugar
 
-> [!IMPORTANT]
-> Requisitos previos: Node.js instalado en tu máquina.
-
-1. **Clona o descarga este repositorio.**
-2. **Instala las dependencias:**
-   ```bash
-   npm install
-   ```
-3. **Ejecuta el servidor de desarrollo:**
-   ```bash
-   npm run dev
-   ```
-4. **Disfruta del juego** abriendo `http://localhost:5173/` en tu navegador.
+1. Elige dificultad, tema y modo (1 jugador / 2 jugadores / Contrarreloj) en la barra superior.
+2. Voltea dos cartas por turno haciendo clic (o con teclado: `Tab` para navegar, `Enter`/`Espacio` para voltear).
+3. Si coinciden, se quedan boca arriba y sumas puntos; si no, vuelven a ocultarse tras un breve instante.
+4. Encuentra todas las parejas para ganar la partida y, si superas tu récord, se actualiza tu Mejor Puntaje.
 
 ---
 
-## 🧪 Pruebas Automatizadas (Testing)
+## ⚙️ Instalación y uso local
 
-El motor lógico central del juego (`useMemorama.js`) está protegido con pruebas unitarias para asegurar que los temporizadores, multiplicadores y el sistema multijugador jamás fallen.
+Requisito: Node.js instalado.
 
-Para ejecutar los tests matemáticos, utiliza el comando:
 ```bash
-npm run test
+# 1. Clona o descarga este repositorio
+git clone <url-del-repositorio>
+cd memorama-web
+
+# 2. Instala las dependencias
+npm install
+
+# 3. Ejecuta el servidor de desarrollo
+npm run dev
 ```
+
+Abre `http://localhost:5173/` en tu navegador. Otros comandos disponibles:
+
+```bash
+npm run build     # build de producción
+npm run preview   # sirve el build de producción localmente
+npm run lint      # analiza el código con oxlint
+```
+
+---
+
+## 🛠️ Tecnologías
+
+- **Frontend:** React 19, Vite 8.
+- **Animaciones:** Framer Motion, Canvas Confetti.
+- **Estilos:** CSS puro con variables (Glassmorphism, temas claro/oscuro) — sin frameworks CSS.
+- **Iconografía:** Lucide React.
+- **Audio:** Web Audio API (sintetizador nativo, sin dependencias de audio).
+- **PWA:** vite-plugin-pwa (Service Worker + manifiesto instalable).
+- **Testing:** Vitest + React Testing Library.
+- **Lint:** oxlint.
+
+---
+
+## 🧪 Tests
+
+La lógica central del juego (`src/hooks/useMemorama.js`) — generación del mazo, detección de parejas, combos, condición de victoria, pistas y el modo Contrarreloj — está cubierta con pruebas unitarias con Vitest y React Testing Library.
+
+```bash
+npm test
+```
+
+---
+
+## 📄 Licencia
+
+Distribuido bajo la licencia **MIT**. Consulta el archivo [`LICENSE`](./LICENSE) para el texto completo.
 
 ---
 

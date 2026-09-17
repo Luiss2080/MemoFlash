@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'Memorama Premium',
-        short_name: 'Memorama',
-        description: 'Juego de Memorama Avanzado',
+        name: 'MemoFlash',
+        short_name: 'MemoFlash',
+        description: 'MemoFlash - Juego de memoria (memorama) avanzado con temas, combos y multijugador local',
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',

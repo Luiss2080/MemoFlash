@@ -20,9 +20,9 @@ export function Layout({ children, resetBestScore, soundEnabled, setSoundEnabled
         {children}
       </main>
       <nav className="floating-dock">
-        <div className="logo cursor-pointer" onClick={() => setIsProfileOpen(true)} title={t.profile}>
-          <span>{profile.avatar}</span>
-        </div>
+        <button className="nav-btn logo-btn" onClick={() => setIsProfileOpen(true)} title={t.profile} aria-label={t.profile}>
+          <span aria-hidden="true">{profile.avatar}</span>
+        </button>
         <button className="nav-btn" onClick={() => setIsStatsOpen(true)} title={t.stats}>
           <BarChart2 size={20} />
         </button>
