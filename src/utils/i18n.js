@@ -1,6 +1,6 @@
 export const dict = {
   es: {
-    title: 'Memorama Premium',
+    title: 'MemoFlash',
     stats: 'Estadísticas',
     manual: 'Manual de Uso',
     settings: 'Configuración',
@@ -42,7 +42,7 @@ export const dict = {
     timeout_announcement: '¡Se acabó el tiempo!'
   },
   en: {
-    title: 'Premium Memory',
+    title: 'MemoFlash',
     stats: 'Statistics',
     manual: 'User Manual',
     settings: 'Settings',
