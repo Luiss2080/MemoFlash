@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { sound } from '../utils/audio';
 
@@ -39,6 +39,28 @@ export function useMemorama() {
   const [combo, setCombo] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [bgmEnabled, setBgmEnabled] = useState(false);
+
+  // Pending setTimeout handles for the mismatch flip-back and the hint reveal.
+  // Tracked in refs (instead of fire-and-forget setTimeout calls) so a restart
+  // or unmount that happens while one of them is still pending can cancel it -
+  // otherwise the stale timeout fires later against the *new* game's state and
+  // wipes out flippedIndices/isLocked mid-turn (see fix/flip-animation-race-condition).
+  const mismatchTimeoutRef = useRef(null);
+  const hintTimeoutRef = useRef(null);
+
+  const clearPendingTimeouts = () => {
+    if (mismatchTimeoutRef.current) {
+      clearTimeout(mismatchTimeoutRef.current);
+      mismatchTimeoutRef.current = null;
+    }
+    if (hintTimeoutRef.current) {
+      clearTimeout(hintTimeoutRef.current);
+      hintTimeoutRef.current = null;
+    }
+  };
+
+  // Cancel any in-flight timeout if the component unmounts mid-animation.
+  useEffect(() => clearPendingTimeouts, []);
 
   const [lang, setLangState] = useState(() => localStorage.getItem('memorama-lang') || 'es');
   const [themeMode, setThemeModeState] = useState(() => localStorage.getItem('memorama-theme') || 'dark');
@@ -92,6 +114,11 @@ export function useMemorama() {
   }, [bgmEnabled]);
 
   const startGame = useCallback((lvl = level, thm = theme, multi = isMultiplayer, ta = isTimeAttack) => {
+    // A rapid restart (or difficulty/theme change) while a mismatch flip-back
+    // or a hint reveal is still pending must not let that stale timeout fire
+    // later and corrupt the freshly-started game's state.
+    clearPendingTimeouts();
+
     setLevel(lvl);
     setTheme(thm);
     setIsMultiplayer(multi);
@@ -194,8 +221,9 @@ export function useMemorama() {
       } else {
         // No match
         sound.error(soundEnabled);
-        setCombo(0); 
-        setTimeout(() => {
+        setCombo(0);
+        mismatchTimeoutRef.current = setTimeout(() => {
+          mismatchTimeoutRef.current = null;
           setFlippedIndices([]);
           setIsLocked(false);
           if (isMultiplayer) setActivePlayer(prev => prev === 1 ? 2 : 1);
@@ -213,7 +241,8 @@ export function useMemorama() {
     const hidden = cards.map((_, i) => i).filter(i => !matchedIndices.includes(i));
     setFlippedIndices(hidden);
     setIsLocked(true);
-    setTimeout(() => {
+    hintTimeoutRef.current = setTimeout(() => {
+      hintTimeoutRef.current = null;
       setFlippedIndices([]);
       setIsLocked(false);
     }, 1000);
