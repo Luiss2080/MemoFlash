@@ -65,19 +65,31 @@ function App() {
           </div>
         </header>
 
-        <ScoreBoard 
-          attempts={attempts} 
-          score={score} 
-          time={time} 
-          bestScore={bestScore} 
-          combo={combo} 
+        <ScoreBoard
+          attempts={attempts}
+          score={score}
+          time={time}
+          bestScore={bestScore}
+          combo={combo}
           isMultiplayer={isMultiplayer}
           activePlayer={activePlayer}
           player1Score={player1Score}
           player2Score={player2Score}
           lang={lang}
         />
-        
+
+        {/* Screen-reader-only live region: announces match progress and the
+            win/game-over outcome without exposing which cards match. */}
+        <p className="sr-only" role="status" aria-live="polite">
+          {isWon
+            ? t.win_announcement
+            : isGameOver
+              ? t.timeout_announcement
+              : isMultiplayer
+              ? t.progress_status_multi(matchedIndices.length / 2, cards.length / 2, player1Score, player2Score)
+              : t.progress_status(matchedIndices.length / 2, cards.length / 2, score)}
+        </p>
+
         <div className="board-container">
           {isWon && (
             <div className="victory-overlay">
@@ -94,12 +106,13 @@ function App() {
             </div>
           )}
           
-          <Board 
-            cards={cards} 
-            flippedIndices={flippedIndices} 
-            matchedIndices={matchedIndices} 
-            onFlip={flipCard} 
+          <Board
+            cards={cards}
+            flippedIndices={flippedIndices}
+            matchedIndices={matchedIndices}
+            onFlip={flipCard}
             level={level}
+            lang={lang}
           />
           {isGameOver && (
             <div className="victory-overlay">
