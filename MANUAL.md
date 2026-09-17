@@ -1,4 +1,4 @@
-# Manual del Administrador / Desarrollador (Memorama)
+# Manual del Administrador / Desarrollador (MemoFlash)
 
 ## Especificaciones de Funcionalidad y Fórmulas
 
