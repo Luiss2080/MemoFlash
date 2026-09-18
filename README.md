@@ -1,121 +1,129 @@
 <div align="center">
-  <h1>⚡ MemoFlash</h1>
-  <p><strong>El clásico juego de memoria (memorama), reinventado como una PWA moderna, rápida e instalable.</strong></p>
-
+  <img src="docs/assets/logo.svg" width="96" alt="Logo de MemoFlash" />
+  <h1>MemoFlash</h1>
+  <p><b>Juego de memoria (memorama) como PWA: modos solitario, contrarreloj y 1 vs 1 local, con audio 8-bit generado en el navegador.</b></p>
+  <img src="https://img.shields.io/badge/estado-funcional-16a34a?style=for-the-badge" alt="Estado: funcional" />
+  <img src="https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite-8-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite 8" />
+  <img src="https://img.shields.io/badge/PWA-offline-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA" />
+  <img src="https://img.shields.io/badge/tests-23%20pasan-16a34a?style=for-the-badge" alt="23 tests" />
+  <a href="https://github.com/Luiss2080/MemoFlash/actions/workflows/ci.yml"><img src="https://github.com/Luiss2080/MemoFlash/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/licencia-MIT-blue?style=for-the-badge" alt="MIT" />
   <p>
-    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
-    <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
-    <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA" />
-    <img src="https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest" />
-    <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+    <a href="#-inicio-rápido">Inicio rápido</a> ·
+    <a href="#-características">Características</a> ·
+    <a href="#-arquitectura">Arquitectura</a> ·
+    <a href="#-pruebas">Pruebas</a> ·
+    <a href="#-lo-que-todavía-no-existe">Limitaciones</a>
   </p>
 </div>
 
----
+MemoFlash es una aplicación web de una sola pantalla construida con React y Vite, instalable como PWA (`vite-plugin-pwa`). Todo ocurre en el navegador: **no tiene backend, cuentas ni ranking en línea**; el perfil, el idioma, el tema y las estadísticas se guardan en `localStorage`.
 
-## 🌟 Descripción
+## 🎬 Vista rápida
 
-**MemoFlash** no es solo un juego de emparejar cartas: es una **Progressive Web App (PWA)** construida con React y Vite, pensada para instalarse como una app nativa y jugarse offline, con interfaz "glassmorphism", animaciones físicas, soporte multi-idioma y una banda sonora de 8-bits generada en tiempo real con la Web Audio API (sin archivos de audio externos).
+<p align="center">
+  <img src="docs/screenshots/tablero.png" width="720" alt="Tablero de MemoFlash en dificultad Fácil (4x4), tema Emojis, modo 1 Jugador, con marcador en cero y dock de navegación inferior" />
+</p>
 
-> [!TIP]
-> **¡Instálalo como App Nativa!**
-> Gracias a su Service Worker y manifiesto PWA (`vite-plugin-pwa`), puedes instalar MemoFlash en tu celular o computadora y jugar sin conexión a internet.
+## ✨ Características
 
----
+| Característica | Detalle |
+| --- | --- |
+| Modos | Solitario; Contrarreloj (60 s iniciales, +5 s por acierto); Multijugador local 1 vs 1 con turnos y marcador por jugador |
+| Dificultad | Fácil 4x4 (8 parejas), Medio 4x6 (12), Difícil 6x6 (18) |
+| Temas de cartas | Comida, Animales, Código/Tecnología y Banderas (emojis) |
+| Puntuación | +100 por pareja más bono de rapidez, combos consecutivos, pista de 1 s por 200 puntos, bono de victoria |
+| Interfaz | Dock inferior (perfil, estadísticas, manual, tema, ajustes), tema oscuro/claro, español e inglés, cartas accesibles con teclado |
+| Persistencia | Perfil local (nombre + avatar), idioma, tema y estadísticas en `localStorage` |
+| Audio | Efectos y música de fondo con osciladores de la Web Audio API, sin archivos de audio |
+| PWA | Service worker autoactualizable y manifiesto instalable (el build precachea 6 archivos) |
 
-## 🚀 Características
+## 🏗️ Arquitectura
 
-### 🎮 Modos de juego
-- **Modo Solitario:** encuentra todas las parejas en el menor tiempo y con los menos intentos posibles para superar tu Mejor Puntaje.
-- **Contrarreloj (Time Attack):** empiezas con 60 segundos; cada acierto suma +5s; si el reloj llega a 0, termina la partida.
-- **Multijugador Local (1 vs 1):** dos jugadores comparten pantalla y turno; cada fallo pasa el turno al otro jugador y cada uno lleva su propio marcador.
+```mermaid
+flowchart TD
+  MAIN["main.jsx"] --> APP["App.jsx"]
+  APP --> HOOK["hooks/useMemorama.js<br/>estado y reglas del juego"]
+  APP --> LAY["components/Layout.jsx"]
+  APP --> BOARD["components/Board.jsx"]
+  BOARD --> CARD["components/Card.jsx"]
+  APP --> SB["components/ScoreBoard.jsx"]
+  APP --> MODALS["Modal · ProfileModal · StatsModal<br/>SettingsModal · ManualModal"]
+  HOOK --> AUDIO["utils/audio.js<br/>Web Audio API"]
+  HOOK --> I18N["utils/i18n.js<br/>es / en"]
+  HOOK --> LS[("localStorage")]
+```
 
-### 🃏 Dificultad y temas
-- Tres dificultades: **Fácil** (4x4, 8 parejas), **Medio** (4x6, 12 parejas) y **Difícil** (6x6, 18 parejas).
-- Cuatro mazos temáticos de emojis: Emojis de comida, Animales, Código/Tecnología y Banderas.
+## 🚀 Inicio rápido
 
-### 🏆 Puntuación
-- +100 puntos por pareja encontrada, más un bono por rapidez (hasta +50).
-- Multiplicador de combo: aciertos consecutivos multiplican los puntos del turno (x2, x3...); un fallo lo reinicia a cero.
-- Pista: revela el tablero por 1 segundo a cambio de 200 puntos (requiere saldo suficiente).
-- Bono de victoria al completar el tablero, mayor cuanto menor sea el tiempo total empleado.
-
-### 🎨 Interfaz
-- **Floating Dock:** navegación inferior estilo macOS con accesos a Perfil, Estadísticas, Manual, Tema y Configuración.
-- **Modo Oscuro / Claro** intercambiable en tiempo real vía variables CSS.
-- **Multi-idioma (i18n):** interfaz completa en Español e Inglés, con selector en Configuración.
-- Cartas navegables por teclado (Tab + Enter/Espacio), además de mouse/touch.
-- Perfil local (nombre + avatar) y estadísticas globales (partidas jugadas, victorias, tiempo total) persistidas en `localStorage`.
-
-### 🎵 Audio
-- Efectos de sonido (flip, acierto, error, victoria) y música de fondo generados en el navegador con osciladores de la **Web Audio API** — no se cargan archivos de audio.
-
----
-
-## 🕹️ Cómo jugar
-
-1. Elige dificultad, tema y modo (1 jugador / 2 jugadores / Contrarreloj) en la barra superior.
-2. Voltea dos cartas por turno haciendo clic (o con teclado: `Tab` para navegar, `Enter`/`Espacio` para voltear).
-3. Si coinciden, se quedan boca arriba y sumas puntos; si no, vuelven a ocultarse tras un breve instante.
-4. Encuentra todas las parejas para ganar la partida y, si superas tu récord, se actualiza tu Mejor Puntaje.
-
----
-
-## ⚙️ Instalación y uso local
-
-Requisito: Node.js instalado.
+| Requisito | Versión |
+| --- | --- |
+| Node.js | 20 o superior (el CI usa 20) |
+| npm | el que trae Node |
 
 ```bash
-# 1. Clona o descarga este repositorio
-git clone <url-del-repositorio>
-cd memorama-web
-
-# 2. Instala las dependencias
-npm install
-
-# 3. Ejecuta el servidor de desarrollo
+git clone https://github.com/Luiss2080/MemoFlash.git
+cd MemoFlash
+npm ci
 npm run dev
 ```
 
-Abre `http://localhost:5173/` en tu navegador. Otros comandos disponibles:
+Abre la URL que imprime Vite (por defecto `http://localhost:5173/`). Otros comandos verificados:
 
 ```bash
-npm run build     # build de producción
-npm run preview   # sirve el build de producción localmente
-npm run lint      # analiza el código con oxlint
+npm run build     # build de producción con service worker
+npm run preview   # sirve el build localmente
+npm run lint      # oxlint
 ```
 
----
+<details>
+<summary>Estructura de carpetas</summary>
 
-## 🛠️ Tecnologías
+```text
+MemoFlash/
+├── src/
+│   ├── App.jsx, main.jsx, index.css
+│   ├── components/   # Board, Card, Layout, ScoreBoard y modales
+│   ├── hooks/        # useMemorama.js (lógica del juego)
+│   ├── utils/        # audio.js, i18n.js
+│   └── tests/        # 3 archivos de test + setup
+├── public/           # favicon.svg, icons.svg
+├── spec.md, MANUAL.md, AGENTS.md
+└── .github/workflows/ci.yml
+```
 
-- **Frontend:** React 19, Vite 8.
-- **Animaciones:** Framer Motion, Canvas Confetti.
-- **Estilos:** CSS puro con variables (Glassmorphism, temas claro/oscuro) — sin frameworks CSS.
-- **Iconografía:** Lucide React.
-- **Audio:** Web Audio API (sintetizador nativo, sin dependencias de audio).
-- **PWA:** vite-plugin-pwa (Service Worker + manifiesto instalable).
-- **Testing:** Vitest + React Testing Library.
-- **Lint:** oxlint.
+</details>
 
----
+<details>
+<summary>Stack y dependencias</summary>
 
-## 🧪 Tests
+React 19, Vite 8, Framer Motion, canvas-confetti, Lucide React, vite-plugin-pwa; pruebas con Vitest 5 + React Testing Library + jsdom; lint con oxlint. Estilos en CSS propio con variables, sin framework CSS.
 
-La lógica central del juego (`src/hooks/useMemorama.js`) — generación del mazo, detección de parejas, combos, condición de victoria, pistas y el modo Contrarreloj — está cubierta con pruebas unitarias con Vitest y React Testing Library.
+</details>
+
+## 🧪 Pruebas
 
 ```bash
-npm test
+npm test   # vitest run
 ```
 
----
+23 tests en 3 archivos (`useMemorama.test.js`, `useMemorama.logic.test.js`, `useMemorama.raceCondition.test.js`) sobre el hook `useMemorama`: mazo, parejas, combos, victoria, pistas, Contrarreloj y condiciones de carrera al reiniciar. No hay tests de los componentes visuales ni E2E. El CI (`.github/workflows/ci.yml`) ejecuta lint, tests y build en cada push y PR a `main`.
+
+## 🔒 Seguridad
+
+No hay servidor ni datos sensibles: solo `localStorage` del propio navegador.
+
+## 🚧 Lo que todavía no existe
+
+- Ranking o puntuaciones en línea, cuentas y multijugador en red (el 1 vs 1 es en la misma pantalla).
+- Cartas con imágenes: los mazos son solo emojis.
+- Idiomas distintos de español e inglés.
+- Tests de interfaz y E2E.
+- Íconos PWA propios: el manifiesto reutiliza `favicon.svg` para los tamaños 192 y 512.
 
 ## 📄 Licencia
 
-Distribuido bajo la licencia **MIT**. Consulta el archivo [`LICENSE`](./LICENSE) para el texto completo.
+MIT, ver [`LICENSE`](./LICENSE).
 
----
-
-<div align="center">
-  <i>Construido con SDD (Spec-Driven Development) bajo la premisa: <strong>"Que el código diga la verdad, y la especificación también".</strong></i>
-</div>
+<div align="center"><sub>Hecho por Luiss2080 · Construido con Spec-Driven Development (ver <code>spec.md</code>)</sub></div>
